@@ -177,16 +177,8 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
 <div id="login">
   <div class="login-card">
     <div class="logo"><span>🌱</span>Grow Box</div>
-    <p class="muted">Платформа мониторинга и управления теплицей</p>
-    <form id="loginForm">
-      <label class="f">Почта</label>
-      <input type="email" id="lEmail" required autocomplete="username">
-      <div style="height:12px"></div>
-      <label class="f">Пароль</label>
-      <input type="password" id="lPass" required autocomplete="current-password">
-      <div id="lErr" class="small" style="color:var(--danger);min-height:20px;margin:8px 0"></div>
-      <button class="btn" style="width:100%" type="submit">Войти</button>
-    </form>
+    <p class="muted" id="connMsg">Подключение к облаку…</p>
+    <div id="lErr" class="small" style="color:var(--danger)"></div>
   </div>
 </div>
 
@@ -198,7 +190,6 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
       <div class="chips">
         <span id="chipDevice" class="chip gray"><span class="dot"></span>Бокс: ожидание</span>
         <span id="chipPreset" class="chip">—</span>
-        <button class="btn ghost sm" id="btnLogout">Выйти</button>
       </div>
     </div>
     <nav id="nav">
@@ -581,18 +572,26 @@ function sendCommand(name, value){
 }
 
 /* ===================== ВХОД ===================== */
-$("loginForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  $("lErr").textContent = "";
-  try { await auth.signInWithEmailAndPassword($("lEmail").value.trim(), $("lPass").value); }
-  catch(err){ $("lErr").textContent = "Не удалось войти: проверьте почту и пароль"; console.error(err); }
-});
-$("btnLogout").onclick = () => auth.signOut();
-
+// Вход без формы: анонимное подключение к Firebase
+let appStarted = false;
 auth.onAuthStateChanged(user => {
-  $("login").hidden = !!user;
-  $("app").hidden = !user;
-  if(user) startApp(); else stopApp();
+  if(user){
+    $("login").hidden = true;
+    $("app").hidden = false;
+    if(!appStarted){ appStarted = true; startApp(); }
+  } else {
+    $("login").hidden = false;
+    $("app").hidden = true;
+    auth.signInAnonymously().catch(err => {
+      console.error(err);
+      $("connMsg").textContent = "Не удалось подключиться к облаку";
+      $("lErr").innerHTML = err.code === "auth/operation-not-allowed" || err.code === "auth/admin-restricted-operation"
+        ? "Включите анонимный вход: консоль Firebase → Authentication → Sign-in method → <b>Anonymous</b> → Enable."
+        : err.code === "auth/invalid-api-key" || /api-key/.test(err.code || "")
+        ? "Проверьте firebaseConfig в начале скрипта — сейчас там неверный или пустой apiKey."
+        : "Ошибка: " + esc(err.code || err.message);
+    });
+  }
 });
 
 function on(ref, ev, cb){ ref.on(ev, cb); listeners.push([ref, ev, cb]); }
