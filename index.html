@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grow Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f2f8f3; --card:#ffffff; --line:#e1ede3; --text:#1d3223; --muted:#6c8272;
+  --green:#4caf50; --green-d:#2e7d32; --green-l:#e8f5e9; --mint:#c8e6c9;
+  --water:#29a8e0; --water-l:#e3f4fc; --uv:#7e57c2; --uv-l:#efe9f8;
+  --warn:#f2a900; --warn-l:#fff6dc; --danger:#e0463f; --danger-l:#fdecea;
+  --heat:#ff7043; --heat-l:#fff0ea;
+  --radius:18px; --shadow:0 2px 10px rgba(46,125,50,.07),0 1px 2px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,sans-serif;font-size:15px}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+[hidden]{display:none!important}
+h2{font-size:20px;margin:6px 0 14px}
+h3{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+
+/* ---------- вход ---------- */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;
+  background:radial-gradient(circle at 20% 10%,#dff1e1,transparent 50%),radial-gradient(circle at 90% 90%,#e3f4fc,transparent 45%),var(--bg)}
+.login-card{background:#fff;border-radius:24px;box-shadow:var(--shadow);padding:32px 28px;width:100%;max-width:380px}
+.logo{font-size:26px;font-weight:800;color:var(--green-d);display:flex;align-items:center;gap:10px}
+.logo span{font-size:30px}
+
+/* ---------- каркас ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.head-in{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.head-in .logo{font-size:20px}
+.head-in .logo span{font-size:24px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--green-l);color:var(--green-d);font-weight:700;font-size:12.5px;white-space:nowrap}
+.chip.off{background:var(--danger-l);color:var(--danger)}
+.chip.gray{background:#eef2ef;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+nav{max-width:1200px;margin:0 auto;padding:0 12px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{border:0;background:none;padding:10px 14px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button.active{color:var(--green-d);border-bottom-color:var(--green)}
+main{max-width:1200px;margin:0 auto;padding:18px 16px 60px}
+.tab{display:none}.tab.active{display:block}
+
+/* ---------- элементы ---------- */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--line)}
+.grid{display:grid;gap:14px}
+.metrics{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));margin:14px 0}
+.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:14px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--green);color:#fff;transition:.15s;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn:hover{filter:brightness(.95)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.light{background:var(--green-l);color:var(--green-d)}
+.btn.water{background:var(--water)}
+.btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:var(--danger-l);color:var(--danger)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+input[type=text],input[type=number],input[type=time],input[type=email],input[type=password],select,textarea{
+  width:100%;padding:9px 11px;border:1px solid #d5e4d8;border-radius:11px;background:#fbfdfb;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-l)}
+label.f{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700}
+.switch input{appearance:none;width:40px;height:23px;border-radius:999px;background:#cfdcd2;position:relative;cursor:pointer;transition:.2s;margin:0}
+.switch input::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked{background:var(--green)}
+.switch input:checked::after{left:20px}
+.seg{display:inline-flex;background:#eef4ef;border-radius:12px;padding:3px}
+.seg button{border:0;background:none;padding:7px 13px;border-radius:9px;font-weight:700;color:var(--muted);cursor:pointer}
+.seg button.on{background:#fff;color:var(--green-d);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12.5px;background:var(--green-l);color:var(--green-d)}
+.pill.warn{background:var(--warn-l);color:#9a6b00}
+.pill.bad{background:var(--danger-l);color:var(--danger)}
+.pill.info{background:var(--water-l);color:#0b6d99}
+.pill.gray{background:#eef2ef;color:var(--muted)}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.sep{height:1px;background:var(--line);margin:16px 0}
+
+/* ---------- обзор ---------- */
+.hero{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;
+  background:linear-gradient(120deg,#e9f6ea 0%,#ffffff 65%)}
+.hero-title{font-size:24px;font-weight:800;margin:4px 0 8px}
+.hero-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.qwater{display:flex;gap:8px;align-items:center}
+.qwater input{width:90px}
+.metric{position:relative;overflow:hidden}
+.metric .lbl{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px}
+.metric .val{font-size:28px;font-weight:800;margin:6px 0 2px;line-height:1.1}
+.metric .val small{font-size:14px;font-weight:700;color:var(--muted);margin-left:2px}
+.metric .sub{font-size:12.5px;color:var(--muted)}
+.metric.accent-water{background:linear-gradient(160deg,var(--water-l),#fff 70%)}
+.metric.accent-uv{background:linear-gradient(160deg,var(--uv-l),#fff 70%)}
+.metric.accent-warn{background:linear-gradient(160deg,var(--warn-l),#fff 70%)}
+.metric.accent-bad{background:linear-gradient(160deg,var(--danger-l),#fff 70%)}
+.range{height:6px;border-radius:6px;background:#edf2ee;position:relative;margin-top:10px}
+.range .band{position:absolute;top:0;bottom:0;background:var(--mint);border-radius:6px}
+.range .mark{position:absolute;top:-4px;width:4px;height:14px;border-radius:3px;background:var(--green-d);transform:translateX(-2px)}
+.range .mark.out{background:var(--danger)}
+.alarm{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;margin-bottom:10px;font-weight:700}
+.alarm.bad{background:var(--danger-l);color:var(--danger)}
+.alarm.warn{background:var(--warn-l);color:#8a6000}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:800}
+.modrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.modrow:last-child{border-bottom:0}
+.modicon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--green-l);flex:none}
+
+/* ---------- графики ---------- */
+.chart-box{position:relative;height:260px}
+
+/* ---------- пресеты ---------- */
+.presets{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.preset{display:flex;flex-direction:column;gap:10px;transition:.15s}
+.preset.active{border:2px solid var(--green);box-shadow:0 4px 18px rgba(76,175,80,.18)}
+.preset .ptitle{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px}
+.preset .picon{font-size:28px;width:48px;height:48px;border-radius:14px;background:var(--green-l);display:flex;align-items:center;justify-content:center}
+.preset .params{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}
+.preset .params div{background:#f6faf6;border-radius:9px;padding:6px 8px}
+.preset .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--uv-l);color:var(--uv)}
+
+/* ---------- модули ---------- */
+.modules{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.mhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.mhead .modicon{width:46px;height:46px;font-size:24px}
+.mstate{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mform .fields{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.hint{background:#f6faf6;border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted)}
+
+/* ---------- журнал ---------- */
+.ev{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.ev:last-child{border-bottom:0}
+.ev .ic{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--green-l)}
+.ev.lv-warn .ic{background:var(--warn-l)}
+.ev.lv-alarm .ic{background:var(--danger-l)}
+.ev .t{font-size:12px;color:var(--muted)}
+
+/* ---------- управление ---------- */
+.times{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.time-item{display:flex;align-items:center;gap:4px;background:var(--water-l);border-radius:12px;padding:4px 4px 4px 8px}
+.time-item input{width:105px;background:#fff}
+.time-item button{border:0;background:none;cursor:pointer;font-size:16px;color:var(--muted);padding:2px 6px}
+.savebar{position:sticky;bottom:12px;margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  background:#1f3a26;color:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+
+/* ---------- модальное окно, тост ---------- */
+dialog{border:0;border-radius:22px;padding:0;max-width:640px;width:calc(100% - 24px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(20,40,25,.35)}
+.dlg{padding:22px}
+.dlg-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#1f3a26;color:#fff;padding:11px 18px;border-radius:14px;
+  font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:calc(100% - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:26px 10px;color:var(--muted)}
+@media (max-width:600px){
+  .metric .val{font-size:24px}
+  .hero-title{font-size:20px}
+  main{padding:14px 12px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= ВХОД ================= -->
+<div id="login">
+  <div class="login-card">
+    <div class="logo"><span>🌱</span>Grow Box</div>
+    <p class="muted">Платформа мониторинга и управления теплицей</p>
+    <form id="loginForm">
+      <label class="f">Почта</label>
+      <input type="email" id="lEmail" required autocomplete="username">
+      <div style="height:12px"></div>
+      <label class="f">Пароль</label>
+      <input type="password" id="lPass" required autocomplete="current-password">
+      <div id="lErr" class="small" style="color:var(--danger);min-height:20px;margin:8px 0"></div>
+      <button class="btn" style="width:100%" type="submit">Войти</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= ПРИЛОЖЕНИЕ ================= -->
+<div id="app" hidden>
+  <header>
+    <div class="head-in">
+      <div class="logo"><span>🌱</span>Grow Box</div>
+      <div class="chips">
+        <span id="chipDevice" class="chip gray"><span class="dot"></span>Бокс: ожидание</span>
+        <span id="chipPreset" class="chip">—</span>
+        <button class="btn ghost sm" id="btnLogout">Выйти</button>
+      </div>
+    </div>
+    <nav id="nav">
+      <button data-tab="overview" class="active">📊 Обзор</button>
+      <button data-tab="charts">📈 Графики</button>
+      <button data-tab="control">⚙️ Управление</button>
+      <button data-tab="presets">🌿 Пресеты</button>
+      <button data-tab="modules">🧩 Модули</button>
+      <button data-tab="log">📜 Журнал</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ======== ОБЗОР ======== -->
+    <section id="tab-overview" class="tab active">
+      <div id="alarms"></div>
+      <div class="card hero">
+        <div>
+          <div class="muted small">Активный пресет</div>
+          <div class="hero-title"><span id="ovPresetIcon">🌱</span> <span id="ovPreset">—</span></div>
+          <div class="row">
+            <span id="ovClimateState" class="pill gray">нет данных</span>
+            <span id="ovNextWater" class="pill info">💧 —</span>
+            <span id="ovUvState" class="pill gray">☀️ —</span>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <div class="qwater">
+            <input type="number" id="qWaterMl" value="100" min="1" max="2000">
+            <span class="muted">мл</span>
+            <button class="btn water" id="btnWaterNow">💧 Полить сейчас</button>
+          </div>
+          <div class="row">
+            <span class="muted small">Лампа UV:</span>
+            <div class="seg" id="uvSeg">
+              <button data-v="auto">Авто</button><button data-v="on">Вкл</button><button data-v="off">Выкл</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid metrics" id="metrics"></div>
+
+      <div class="grid two">
+        <div class="card"><h3>⚖️ Вес и потребление воды</h3><div id="weightInfo" class="muted">Загрузка…</div></div>
+        <div class="card"><h3>🍃 VPD и климатические пояса</h3><div id="zonesInfo" class="muted">Нет данных</div></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-bottom:4px"><h3 style="margin:0">🧩 Активные модули</h3>
+          <button class="btn light sm" data-goto="modules">Все модули →</button></div>
+        <div id="ovModules"></div>
+      </div>
+    </section>
+
+    <!-- ======== ГРАФИКИ ======== -->
+    <section id="tab-charts" class="tab">
+      <div class="section-title">
+        <h2>Графики</h2>
+        <div class="row">
+          <div class="seg" id="rangeSeg"><button data-h="6">6 ч</button><button data-h="24" class="on">24 ч</button><button data-h="72">3 дня</button><button data-h="168">7 дней</button></div>
+          <button class="btn light sm" id="btnCsv">⬇️ CSV</button>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="card"><h3>🌡️ Температура и влажность</h3><div class="chart-box"><canvas id="chClimate"></canvas></div></div>
+        <div class="card"><h3>🍃 VPD, кПа</h3><div class="chart-box"><canvas id="chVpd"></canvas></div></div>
+        <div class="card"><h3>🫧 CO₂ и TVOC</h3><div class="chart-box"><canvas id="chAir"></canvas></div></div>
+        <div class="card"><h3>⚖️ Вес, г</h3><div class="chart-box"><canvas id="chWeight"></canvas></div></div>
+      </div>
+      <p class="muted small">Точки сохраняются каждые 5 минут. Пока бокс работает меньше суток, графики будут короткими.</p>
+    </section>
+
+    <!-- ======== УПРАВЛЕНИЕ ======== -->
+    <section id="tab-control" class="tab">
+      <h2>Управление</h2>
+      <form id="ctlForm" autocomplete="off">
+        <div class="grid two">
+          <div class="card">
+            <h3>💧 Полив</h3>
+            <label class="switch"><input type="checkbox" id="cWaterEnabled"> Полив по расписанию</label>
+            <div class="sep"></div>
+            <label class="f">Время полива (до 6 раз в день)</label>
+            <div class="times" id="cTimes"></div>
+            <div style="height:12px"></div>
+            <div class="fields">
+              <div><label class="f">Объём за раз, мл</label><input type="number" id="cVolume" min="1" max="2000"></div>
+              <div><label class="f">Раз в N дней</label><input type="number" id="cEveryDays" min="1" max="14"></div>
+              <div><label class="f">Производительность, мл/с</label><input type="number" id="cFlow" min="0.1" step="0.1"></div>
+            </div>
+            <div class="sep"></div>
+            <h3 style="font-size:14px">🧪 Калибровка насоса</h3>
+            <p class="muted small" style="margin-top:0">Поставьте мерный стакан под выход полива, нажмите «Налить 10 с», затем введите сколько налилось. Производительность рассчитается и сохранится автоматически.</p>
+            <div class="row">
+              <button type="button" class="btn light sm" id="btnCalRun">▶ Налить 10 с</button>
+              <input type="number" id="calMl" placeholder="налилось, мл" style="width:140px">
+              <button type="button" class="btn sm" id="btnCalSave">Рассчитать</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>☀️ UV-лампа</h3>
+            <label class="f">Режим</label>
+            <select id="cUvMode">
+              <option value="auto">Авто — по расписанию</option>
+              <option value="on">Всегда включена</option>
+              <option value="off">Выключена</option>
+            </select>
+            <div style="height:12px"></div>
+            <div class="fields">
+              <div><label class="f">Включение</label><input type="time" id="cUvStart"></div>
+              <div><label class="f">Выключение</label><input type="time" id="cUvEnd"></div>
+              <div><label class="f">Яркость, %</label><input type="number" id="cUvBright" min="0" max="100"></div>
+            </div>
+            <p class="muted small" id="uvHours"></p>
+            <p class="muted small">При открытой двери UV всегда плавно гаснет.</p>
+          </div>
+
+          <div class="card">
+            <h3>🌡️ Цели климата</h3>
+            <p class="muted small" style="margin-top:0">Задаются пресетом, можно поправить вручную. По ним работают модули в режиме «Авто».</p>
+            <div class="fields">
+              <div><label class="f">Темп. мин, °C</label><input type="number" step="0.5" id="cTMin"></div>
+              <div><label class="f">Темп. макс, °C</label><input type="number" step="0.5" id="cTMax"></div>
+              <div><label class="f">Влажн. мин, %</label><input type="number" id="cHMin"></div>
+              <div><label class="f">Влажн. макс, %</label><input type="number" id="cHMax"></div>
+              <div><label class="f">CO₂ макс, ppm</label><input type="number" id="cCo2Max" step="50"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>🔔 Уведомления Telegram</h3>
+            <label class="switch"><input type="checkbox" id="cTgEnabled"> Отправлять тревоги в Telegram</label>
+            <div style="height:12px"></div>
+            <div class="fields" style="grid-template-columns:1fr">
+              <div><label class="f">Токен бота</label><input type="text" id="cTgToken" placeholder="123456:ABC..."></div>
+              <div><label class="f">Chat ID</label><input type="text" id="cTgChat" placeholder="123456789"></div>
+            </div>
+            <div style="height:10px"></div>
+            <label class="switch"><input type="checkbox" id="cTgWater"> Сообщать о каждом поливе</label>
+            <p class="muted small">Бота создайте в @BotFather, свой Chat ID узнайте у @userinfobot, затем напишите боту /start.</p>
+            <button type="button" class="btn light sm" id="btnTgTest">Отправить тест</button>
+          </div>
+
+          <div class="card">
+            <h3>🔧 Устройство</h3>
+            <div class="fields">
+              <div><label class="f">Предупреждение о двери, мин</label><input type="number" id="cDoorMin" min="1" max="120"></div>
+              <div><label class="f">Часовой пояс</label><select id="cTz"></select></div>
+            </div>
+            <div class="sep"></div>
+            <div class="row">
+              <button type="button" class="btn light sm" id="btnTare">⚖️ Обнулить весы</button>
+              <button type="button" class="btn danger sm" id="btnReboot">↻ Перезагрузить бокс</button>
+            </div>
+            <div class="sep"></div>
+            <div id="devInfo" class="small muted"></div>
+          </div>
+        </div>
+        <div class="savebar" id="saveBar" hidden>
+          <span>Есть несохранённые изменения</span>
+          <div class="row">
+            <button type="button" class="btn ghost sm" id="btnCtlReset">Отменить</button>
+            <button type="submit" class="btn sm">💾 Сохранить</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ======== ПРЕСЕТЫ ======== -->
+    <section id="tab-presets" class="tab">
+      <div class="section-title">
+        <h2>Пресеты растений</h2>
+        <div class="row">
+          <button class="btn light sm" id="btnPresetFromCurrent">📋 Сохранить текущие настройки</button>
+          <button class="btn sm" id="btnPresetNew">＋ Свой пресет</button>
+        </div>
+      </div>
+      <p class="muted small" style="margin-top:-6px">Применение пресета сразу меняет цели климата, расписание полива и UV. Модули в режиме «Авто» подстраиваются сами. Значения — стартовые, их можно поправить под свой сорт.</p>
+      <div class="grid presets" id="presetGrid"></div>
+    </section>
+
+    <!-- ======== МОДУЛИ ======== -->
+    <section id="tab-modules" class="tab">
+      <h2>Модули</h2>
+      <div class="card" style="margin-bottom:14px">
+        <h3>➕ Как подключить новый модуль</h3>
+        <div class="small muted">
+          1. Установите модуль на боковую ленту 5 В — он включится сам.<br>
+          2. При первом запуске модуль создаёт Wi-Fi сеть <b>GrowBox-Module-XXXX</b>. Подключитесь к ней с телефона и выберите домашнюю сеть.<br>
+          3. Через несколько секунд модуль появится ниже. Его можно переименовать и настроить.<br>
+          Сброс Wi-Fi модуля: удерживать кнопку BOOT 5 секунд.
+        </div>
+      </div>
+      <div class="grid modules" id="moduleGrid"></div>
+    </section>
+
+    <!-- ======== ЖУРНАЛ ======== -->
+    <section id="tab-log" class="tab">
+      <div class="section-title">
+        <h2>Журнал событий</h2>
+        <div class="seg" id="logSeg"><button data-f="all" class="on">Все</button><button data-f="alarm">Тревоги</button><button data-f="watering">Полив</button><button data-f="module">Модули</button></div>
+      </div>
+      <div class="card" id="logList"><div class="empty">Событий пока нет</div></div>
+    </section>
+  </main>
+</div>
+
+<!-- ================= ОКНО ПРЕСЕТА ================= -->
+<dialog id="presetDlg">
+  <form class="dlg" id="presetForm" method="dialog">
+    <h2 id="pdTitle">Новый пресет</h2>
+    <div class="fields" style="grid-template-columns:2fr 1fr">
+      <div><label class="f">Название</label><input type="text" id="pName" required maxlength="40"></div>
+      <div><label class="f">Иконка</label><select id="pIcon"></select></div>
+    </div>
+    <div style="height:10px"></div>
+    <label class="f">Описание</label>
+    <input type="text" id="pDesc" maxlength="120" placeholder="например: мой сорт, 2-я неделя">
+    <div class="sep"></div>
+    <label class="f" style="color:var(--text)">🌡️ Климат</label>
+    <div class="fields">
+      <div><label class="f">Темп. мин</label><input type="number" step="0.5" id="pTMin" required></div>
+      <div><label class="f">Темп. макс</label><input type="number" step="0.5" id="pTMax" required></div>
+      <div><label class="f">Влажн. мин</label><input type="number" id="pHMin" required></div>
+      <div><label class="f">Влажн. макс</label><input type="number" id="pHMax" required></div>
+      <div><label class="f">CO₂ макс</label><input type="number" id="pCo2" step="50" required></div>
+    </div>
+    <div class="sep"></div>
+    <label class="f" style="color:var(--text)">💧 Полив</label>
+    <div class="fields">
+      <div style="grid-column:span 2"><label class="f">Время через запятую</label><input type="text" id="pTimes" placeholder="08:00, 20:00" required></div>
+      <div><label class="f">Объём, мл</label><input type="number" id="pVol" min="1" max="2000" required></div>
+      <div><label class="f">Раз в N дней</label><input type="number" id="pEvery" min="1" max="14" required></div>
+    </div>
+    <div class="sep"></div>
+    <label class="f" style="color:var(--text)">☀️ UV</label>
+    <div class="fields">
+      <div><label class="f">Включение</label><input type="time" id="pUvStart" required></div>
+      <div><label class="f">Выключение</label><input type="time" id="pUvEnd" required></div>
+      <div><label class="f">Яркость, %</label><input type="number" id="pUvBright" min="0" max="100" required></div>
+    </div>
+    <div id="pErr" class="small" style="color:var(--danger);min-height:18px;margin-top:10px"></div>
+    <div class="dlg-foot">
+      <button type="button" class="btn ghost" id="pCancel">Отмена</button>
+      <button type="button" class="btn" id="pSave">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   НАСТРОЙКИ FIREBASE — вставьте конфигурацию своего веб-приложения
+   (Консоль Firebase → Настройки проекта → Ваши приложения → Web)
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR-PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR-PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "YOUR-PROJECT",
+  appId: "YOUR_APP_ID"
+};
+const DEVICE_ID = "growbox";
+
+/* ===================== ВСТРОЕННЫЕ ПРЕСЕТЫ ===================== */
+const BUILTIN_PRESETS = [
+  { id:"microgreens", name:"Микрозелень", icon:"🌱", desc:"Горох, редис, подсолнечник, руккола",
+    climate:{tempMin:18,tempMax:24,humMin:50,humMax:70,co2Max:1000},
+    watering:{times:["08:00","20:00"],everyDays:1,volumeMl:50}, uv:{start:"06:00",end:"22:00",brightness:80} },
+  { id:"basil", name:"Базилик", icon:"🌿", desc:"Любит тепло и много света, не терпит переувлажнения",
+    climate:{tempMin:20,tempMax:27,humMin:40,humMax:60,co2Max:1200},
+    watering:{times:["09:00"],everyDays:1,volumeMl:150}, uv:{start:"07:00",end:"21:00",brightness:100} },
+  { id:"lettuce", name:"Салат", icon:"🥬", desc:"Прохлада и ровная влажность, при жаре стрелкуется",
+    climate:{tempMin:16,tempMax:22,humMin:50,humMax:70,co2Max:1000},
+    watering:{times:["08:00","18:00"],everyDays:1,volumeMl:80}, uv:{start:"07:00",end:"21:00",brightness:90} },
+  { id:"tomato_seedling", name:"Томат (рассада)", icon:"🍅", desc:"Длинный день, тепло, умеренный полив",
+    climate:{tempMin:20,tempMax:26,humMin:60,humMax:70,co2Max:1200},
+    watering:{times:["09:00"],everyDays:1,volumeMl:150}, uv:{start:"06:00",end:"22:00",brightness:100} },
+  { id:"pepper", name:"Перец", icon:"🌶️", desc:"Теплолюбивый, не любит перепадов температуры",
+    climate:{tempMin:22,tempMax:28,humMin:55,humMax:70,co2Max:1200},
+    watering:{times:["09:00"],everyDays:1,volumeMl:150}, uv:{start:"06:00",end:"22:00",brightness:100} },
+  { id:"strawberry", name:"Клубника", icon:"🍓", desc:"Умеренное тепло, влажность выше средней",
+    climate:{tempMin:18,tempMax:25,humMin:60,humMax:75,co2Max:1200},
+    watering:{times:["08:00"],everyDays:1,volumeMl:120}, uv:{start:"07:00",end:"21:00",brightness:100} },
+  { id:"mango", name:"Манго", icon:"🥭", desc:"Тропик: жарко и влажно, 12-часовой день",
+    climate:{tempMin:24,tempMax:30,humMin:60,humMax:80,co2Max:1200},
+    watering:{times:["09:00"],everyDays:1,volumeMl:200}, uv:{start:"07:00",end:"19:00",brightness:100} },
+  { id:"succulents", name:"Суккуленты и кактусы", icon:"🌵", desc:"Сухо, тепло, редкий полив",
+    climate:{tempMin:20,tempMax:30,humMin:20,humMax:40,co2Max:1500},
+    watering:{times:["10:00"],everyDays:7,volumeMl:100}, uv:{start:"08:00",end:"20:00",brightness:100} },
+  { id:"orchid", name:"Орхидея (фаленопсис)", icon:"🌸", desc:"Высокая влажность, рассеянный свет",
+    climate:{tempMin:20,tempMax:28,humMin:60,humMax:80,co2Max:1200},
+    watering:{times:["09:00"],everyDays:5,volumeMl:150}, uv:{start:"08:00",end:"20:00",brightness:60} }
+];
+const ICONS = ["🌱","🌿","🥬","🍅","🌶️","🍓","🥭","🌵","🌸","🌻","🥒","🫑","🍋","🍊","🌾","🍄","🌷","🪴","🫘","🥕"];
+
+const MOD_TYPES = {
+  humidifier:{icon:"💧", label:"Увлажнение", color:"var(--water-l)"},
+  heater:{icon:"🔥", label:"Нагрев", color:"var(--heat-l)"},
+  fan:{icon:"🌀", label:"Вентиляция", color:"var(--green-l)"},
+  camera:{icon:"📷", label:"Камера", color:"var(--uv-l)"}
+};
+
+const ZONES = [
+  {name:"Экваториальный", t:[25,28], h:[70,90]},
+  {name:"Тропический (сухой)", t:[30,45], h:[10,30]},
+  {name:"Умеренный", t:[10,28], h:[45,75]},
+  {name:"Арктический", t:[-30,5], h:[20,50]}
+];
+
+/* ===================== FIREBASE ===================== */
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+const base = db.ref("devices/" + DEVICE_ID);
+
+const S = { telemetry:null, settings:null, modules:{}, presets:{}, events:[], history24:[], serverOffset:0, chartHours:24, chartData:[], logFilter:"all" };
+const listeners = [];
+
+/* ===================== УТИЛИТЫ ===================== */
+const $ = id => document.getElementById(id);
+const nowMs = () => Date.now() + S.serverOffset;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = (v, d = 1) => (v === null || v === undefined || isNaN(v)) ? "—" : Number(v).toFixed(d);
+const pad = n => String(n).padStart(2, "0");
+const fmtTime = ts => { const d = new Date(ts); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+const fmtDateTime = ts => { const d = new Date(ts); return pad(d.getDate()) + "." + pad(d.getMonth() + 1) + " " + fmtTime(ts); };
+function ago(ts){
+  if(!ts) return "никогда";
+  const s = Math.max(0, Math.round((nowMs() - ts) / 1000));
+  if(s < 60) return s + " с назад";
+  if(s < 3600) return Math.round(s / 60) + " мин назад";
+  if(s < 86400) return Math.round(s / 3600) + " ч назад";
+  return Math.round(s / 86400) + " дн назад";
+}
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function vpd(t, h){
+  if(t === undefined || h === undefined || t === null || h === null) return null;
+  const svp = 0.6108 * Math.exp(17.27 * t / (t + 237.3));
+  return svp * (1 - h / 100);
+}
+function vpdZone(v){
+  if(v === null) return {txt:"нет данных", cls:"gray"};
+  if(v < 0.4) return {txt:"слишком влажно, риск плесени", cls:"warn"};
+  if(v < 0.8) return {txt:"мягко — рассада, черенки, микрозелень", cls:""};
+  if(v < 1.2) return {txt:"оптимально для вегетации", cls:""};
+  if(v < 1.6) return {txt:"сухо — подходит для цветения", cls:"warn"};
+  return {txt:"слишком сухо, растение испаряет много воды", cls:"bad"};
+}
+const TR = {"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"e","ж":"zh","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"h","ц":"c","ч":"ch","ш":"sh","щ":"sch","ъ":"","ы":"y","ь":"","э":"e","ю":"yu","я":"ya"};
+function translit(s){
+  return [...String(s)].map(ch => {
+    const l = ch.toLowerCase(), t = TR[l];
+    if(t === undefined) return /[\x20-\x7e]/.test(ch) ? ch : "";
+    return ch !== l && t ? t[0].toUpperCase() + t.slice(1) : t;
+  }).join("").replace(/\s+/g, " ").trim().slice(0, 16);
+}
+const TIME_RE = /^([01]?\d|2[0-3]):([0-5]\d)$/;
+const normTime = s => { const m = String(s).trim().match(TIME_RE); return m ? pad(+m[1]) + ":" + m[2] : null; };
+const toMin = s => { const m = String(s || "").match(TIME_RE); return m ? (+m[1]) * 60 + (+m[2]) : 0; };
+function uvHoursText(start, end){
+  const len = (toMin(end) - toMin(start) + 1440) % 1440;
+  return "Световой день UV: " + Math.floor(len / 60) + " ч" + (len % 60 ? " " + (len % 60) + " мин" : "");
+}
+function isDeviceOnline(){ const t = S.telemetry; return !!(t && t.ts && nowMs() - t.ts < 60000); }
+function isModuleOnline(m){ const ls = m && m.state && m.state.lastSeen; return !!(ls && nowMs() - ls < 90000); }
+function allPresets(){
+  const custom = Object.entries(S.presets || {}).map(([id, p]) => ({...p, id, custom:true}));
+  return [...BUILTIN_PRESETS, ...custom];
+}
+function saveSettings(patch){
+  return base.child("settings").update({...patch, version: Date.now()});
+}
+function sendCommand(name, value){
+  return base.child("commands/" + name).set(value);
+}
+
+/* ===================== ВХОД ===================== */
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("lErr").textContent = "";
+  try { await auth.signInWithEmailAndPassword($("lEmail").value.trim(), $("lPass").value); }
+  catch(err){ $("lErr").textContent = "Не удалось войти: проверьте почту и пароль"; console.error(err); }
+});
+$("btnLogout").onclick = () => auth.signOut();
+
+auth.onAuthStateChanged(user => {
+  $("login").hidden = !!user;
+  $("app").hidden = !user;
+  if(user) startApp(); else stopApp();
+});
+
+function on(ref, ev, cb){ ref.on(ev, cb); listeners.push([ref, ev, cb]); }
+function stopApp(){ listeners.splice(0).forEach(([r, e, c]) => r.off(e, c)); clearInterval(S.tick); clearInterval(S.histTick); }
+
+function startApp(){
+  on(db.ref(".info/serverTimeOffset"), "value", s => S.serverOffset = s.val() || 0);
+  on(base.child("telemetry"), "value", s => { S.telemetry = s.val(); renderOverview(); renderDevInfo(); });
+  on(base.child("settings"), "value", s => { S.settings = s.val() || {}; renderOverview(); fillControlForm(); renderPresets(); renderModules(); });
+  on(base.child("modules"), "value", s => { S.modules = s.val() || {}; renderModules(); renderOverview(); });
+  on(base.child("presets"), "value", s => { S.presets = s.val() || {}; renderPresets(); });
+  on(base.child("events").limitToLast(150), "value", s => {
+    const arr = []; s.forEach(c => { arr.push({key:c.key, ...c.val()}); });
+    S.events = arr.reverse(); renderLog(); renderWeight();
+  });
+  loadHistory24();
+  S.histTick = setInterval(loadHistory24, 5 * 60 * 1000);
+  S.tick = setInterval(() => { renderOverview(); renderModulesLive(); }, 5000);
+}
+
+/* ===================== ВКЛАДКИ ===================== */
+function showTab(name){
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.id === "tab-" + name));
+  if(name === "charts") loadCharts();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+document.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => showTab(b.dataset.goto));
+
+/* ===================== ОБЗОР ===================== */
+function rangeBar(value, min, max, pad){
+  if(value === null || value === undefined || isNaN(value)) return "";
+  const lo = min - pad, hi = max + pad, span = hi - lo;
+  const pos = v => Math.max(0, Math.min(100, (v - lo) / span * 100));
+  const out = value < min || value > max;
+  return `<div class="range"><div class="band" style="left:${pos(min)}%;width:${pos(max) - pos(min)}%"></div>
+    <div class="mark ${out ? "out" : ""}" style="left:${pos(value)}%"></div></div>`;
+}
+function metric(icon, label, val, unit, sub, accent, extra){
+  return `<div class="card metric ${accent ? "accent-" + accent : ""}">
+    <div class="lbl">${icon} ${label}</div>
+    <div class="val">${val}${unit ? `<small>${unit}</small>` : ""}</div>
+    <div class="sub">${sub || "&nbsp;"}</div>${extra || ""}</div>`;
+}
+
+function renderOverview(){
+  const t = S.telemetry || {}, st = S.settings || {}, c = st.climate || {};
+  const online = isDeviceOnline();
+
+  // шапка
+  const chip = $("chipDevice");
+  chip.className = "chip " + (online ? "" : (S.telemetry ? "off" : "gray"));
+  chip.innerHTML = `<span class="dot"></span>${online ? "Бокс онлайн" : (S.telemetry ? "Бокс офлайн · " + ago(t.ts) : "Бокс: ожидание")}`;
+  $("chipPreset").textContent = (st.presetIcon || "🌱") + " " + (st.presetName || "Без пресета");
+  $("ovPreset").textContent = st.presetName || "Без пресета";
+  $("ovPresetIcon").textContent = st.presetIcon || "🌱";
+
+  // тревоги
+  const alarms = [];
+  if(S.telemetry && !online) alarms.push(["bad", "📡", "Бокс не на связи " + ago(t.ts) + ". Проверьте питание и Wi-Fi."]);
+  if(online){
+    if(t.doorWarn) alarms.push(["bad", "🚪", "Дверь открыта слишком долго — закройте дверь"]);
+    if(t.waterAlarm) alarms.push(["bad", "🚱", "Нет воды: подключите резервуар или подачу воды"]);
+    const sn = t.sensors || {};
+    if(sn.bme === false) alarms.push(["warn", "🌡️", "Ошибка датчика BME280 (температура, влажность)"]);
+    if(sn.ccs === false) alarms.push(["warn", "🫧", "Ошибка датчика CCS811 (CO₂, TVOC)"]);
+    if(sn.hx === false) alarms.push(["warn", "⚖️", "Ошибка весов HX711"]);
+    if(t.timeValid === false) alarms.push(["warn", "🕒", "Бокс ещё не получил точное время — расписание работает по таймеру"]);
+  }
+  Object.entries(S.modules).forEach(([id, m]) => {
+    if(!isModuleOnline(m)) alarms.push(["warn", "🧩", `Модуль «${esc(m.settings?.name || id)}» не отвечает (${ago(m.state?.lastSeen)})`]);
+    else if(m.state?.overheat) alarms.push(["bad", "🔥", `Модуль «${esc(m.settings?.name || id)}»: аварийное отключение по перегреву`]);
+  });
+  $("alarms").innerHTML = alarms.map(([cls, ic, txt]) => `<div class="alarm ${cls}"><span>${ic}</span>${txt}</div>`).join("");
+
+  // состояние климата
+  const cs = $("ovClimateState");
+  if(t.t === undefined || !online){ cs.className = "pill gray"; cs.textContent = "нет данных"; }
+  else {
+    const probs = [];
+    if(t.t < c.tempMin) probs.push("холодно"); if(t.t > c.tempMax) probs.push("жарко");
+    if(t.h < c.humMin) probs.push("сухо"); if(t.h > c.humMax) probs.push("влажно");
+    if(t.co2 !== undefined && !t.co2Warm && t.co2 > c.co2Max) probs.push("много CO₂");
+    cs.className = "pill " + (probs.length ? "warn" : "");
+    cs.textContent = probs.length ? "⚠️ " + probs.join(", ") : "✅ Условия в норме";
+  }
+
+  // полив и UV
+  const nw = $("ovNextWater");
+  if(t.pump2) nw.textContent = "💧 Идёт полив " + (t.pump2Ml ? t.pump2Ml + " мл" : "");
+  else if(st.watering && st.watering.enabled === false) nw.textContent = "💧 Полив выключен";
+  else if(t.nextWaterMin >= 0 && online){
+    const at = new Date(nowMs() + t.nextWaterMin * 60000);
+    const days = Math.floor((at - new Date().setHours(0,0,0,0)) / 86400000);
+    nw.textContent = "💧 Полив " + (days === 0 ? "сегодня" : days === 1 ? "завтра" : "через " + days + " дн") + " в " + fmtTime(at) + " · " + (st.watering?.volumeMl || "—") + " мл";
+  } else nw.textContent = "💧 —";
+
+  const uvMode = st.uv?.mode || "auto";
+  const uvs = $("ovUvState");
+  uvs.className = "pill " + (t.uv > 0 ? "" : "gray");
+  uvs.textContent = "☀️ UV " + (online ? (t.uv > 0 ? t.uv + "%" : (t.uvWanted && t.door === "open" ? "пауза (дверь)" : "выкл")) : "—") +
+    (uvMode === "auto" && st.uv ? " · " + st.uv.start + "–" + st.uv.end : uvMode === "on" ? " · всегда" : " · выключена");
+  document.querySelectorAll("#uvSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === uvMode));
+
+  // карточки
+  const v = online ? vpd(t.t, t.h) : null, vz = vpdZone(v);
+  const tOut = t.t !== undefined && (t.t < c.tempMin || t.t > c.tempMax);
+  const hOut = t.h !== undefined && (t.h < c.humMin || t.h > c.humMax);
+  const co2Out = t.co2 !== undefined && !t.co2Warm && t.co2 > c.co2Max;
+  const val = (x, d) => online && x !== undefined ? num(x, d) : "—";
+
+  const cards = [
+    metric("🌡️", "Температура", val(t.t, 1), "°C", `цель ${c.tempMin ?? "—"}–${c.tempMax ?? "—"} °C`, tOut ? "warn" : "",
+      online ? rangeBar(t.t, c.tempMin, c.tempMax, 8) : ""),
+    metric("💦", "Влажность", val(t.h, 1), "%", `цель ${c.humMin ?? "—"}–${c.humMax ?? "—"} %`, hOut ? "warn" : "",
+      online ? rangeBar(t.h, c.humMin, c.humMax, 20) : ""),
+    metric("🍃", "VPD", v === null ? "—" : num(v, 2), "кПа", vz.txt, vz.cls === "bad" ? "bad" : vz.cls === "warn" ? "warn" : ""),
+    metric("🫧", "CO₂", val(t.co2, 0), "ppm", t.co2Warm ? "датчик прогревается" : `макс ${c.co2Max ?? "—"} ppm`, co2Out ? "warn" : ""),
+    metric("🧪", "TVOC", val(t.tvoc, 0), "ppb", t.tvoc > 500 ? "повышено" : "летучие соединения", ""),
+    metric("⚖️", "Вес", val(t.weight, 0), "г", "растение + субстрат", ""),
+    metric("🚰", "Вода", online ? (t.water ? "Есть" : t.pump1 === "on" ? "Долив" : "Нет") : "—", "",
+      online ? "уровень датчика " + t.waterLevel : "", online && !t.water ? "bad" : "water"),
+    metric("🚪", "Дверь", online ? (t.door === "closed" ? "Закрыта" : "Открыта") : "—", "",
+      online ? "основной свет " + t.led + "%" : "", t.doorWarn ? "bad" : ""),
+    metric("☀️", "UV-лампа", online ? t.uv : "—", online ? "%" : "", uvMode === "auto" ? "по расписанию" : uvMode === "on" ? "всегда вкл" : "выключена", "uv"),
+    metric("📶", "Wi-Fi", online ? t.rssi : "—", online ? "дБм" : "",
+      online ? (t.rssi > -60 ? "отличный сигнал" : t.rssi > -75 ? "нормальный сигнал" : "слабый сигнал") : "", "")
+  ];
+  $("metrics").innerHTML = cards.join("");
+
+  // VPD и пояса
+  if(online && t.t !== undefined){
+    const match = ZONES.filter(z => t.t >= z.t[0] && t.t <= z.t[1] && t.h >= z.h[0] && t.h <= z.h[1]).map(z => z.name);
+    $("zonesInfo").innerHTML =
+      `<div class="kv"><span>VPD сейчас</span><b>${num(v, 2)} кПа</b></div>
+       <div class="kv"><span>Оценка</span><span class="pill ${vz.cls}">${vz.txt}</span></div>
+       <div class="kv"><span>Точка росы</span><b>${num(dewPoint(t.t, t.h), 1)} °C</b></div>
+       <div class="kv"><span>Условия похожи на пояс</span><b>${match.length ? match.join(", ") : "ни один из базовых"}</b></div>
+       <p class="small muted">VPD показывает, насколько «тянет» воздух влагу из листьев. Он точнее одной влажности говорит, комфортно ли растению.</p>`;
+  } else $("zonesInfo").textContent = "Нет данных";
+
+  // модули в обзоре
+  const mods = Object.entries(S.modules);
+  $("ovModules").innerHTML = mods.length ? mods.map(([id, m]) => {
+    const tp = MOD_TYPES[m.info?.type] || {icon:"🧩", label:"Модуль", color:"var(--green-l)"};
+    const onl = isModuleOnline(m);
+    return `<div class="modrow"><div class="modicon" style="background:${tp.color}">${tp.icon}</div>
+      <div style="flex:1;min-width:0"><b>${esc(m.settings?.name || id)}</b><div class="small muted">${esc(onl ? (m.state?.reason || "") : "не на связи · " + ago(m.state?.lastSeen))}</div></div>
+      <span class="pill ${!onl ? "bad" : m.state?.on ? "" : "gray"}">${!onl ? "офлайн" : m.state?.on ? "работает" : "ожидает"}</span></div>`;
+  }).join("") : `<div class="empty">Модули пока не подключены</div>`;
+}
+function dewPoint(t, h){
+  const a = 17.27, b = 237.7, g = a * t / (b + t) + Math.log(Math.max(h, 1) / 100);
+  return b * g / (a - g);
+}
+
+// Быстрые действия
+$("btnWaterNow").onclick = async () => {
+  const ml = Math.round(+$("qWaterMl").value);
+  if(!(ml > 0 && ml <= 2000)) return toast("Укажите объём от 1 до 2000 мл");
+  if(!confirm(`Полить сейчас ${ml} мл?`)) return;
+  await sendCommand("waterNow", {ml, ts: Date.now()});
+  toast("Команда отправлена — полив начнётся в течение нескольких секунд");
+};
+document.querySelectorAll("#uvSeg button").forEach(b => b.onclick = async () => {
+  await saveSettings({"uv/mode": b.dataset.v});
+  toast("Режим UV: " + b.textContent);
+});
+
+/* ===================== ВЕС ===================== */
+async function loadHistory24(){
+  S.history24 = await loadHistory(24);
+  renderWeight();
+}
+async function loadHistory(hours){
+  const n = Math.ceil(hours * 12) + 20;
+  const snap = await base.child("history").orderByKey().limitToLast(n).once("value");
+  const from = nowMs() - hours * 3600000, arr = [];
+  snap.forEach(c => { const v = c.val(); if(v && v.ts >= from) arr.push(v); });
+  return arr;
+}
+function renderWeight(){
+  const box = $("weightInfo");
+  const t = S.telemetry || {};
+  const hist = (S.history24 || []).filter(p => p.w !== undefined);
+  if(t.weight === undefined){ box.textContent = "Нет данных о весе"; return; }
+  const rows = [`<div class="kv"><span>Сейчас</span><b>${num(t.weight, 0)} г</b></div>`];
+
+  const lastW = S.events.find(e => e.type === "watering");
+  if(lastW){
+    const after = hist.filter(p => p.ts >= lastW.ts && p.ts <= lastW.ts + 3600000);
+    const peak = after.length ? Math.max(...after.map(p => p.w)) : null;
+    rows.push(`<div class="kv"><span>Последний полив</span><b>${fmtDateTime(lastW.ts)} · ${lastW.ml || "?"} мл</b></div>`);
+    if(peak !== null){
+      const used = peak - t.weight;
+      const hrs = (nowMs() - lastW.ts) / 3600000;
+      rows.push(`<div class="kv"><span>Ушло воды с полива</span><b>${num(Math.max(used, 0), 0)} г</b></div>`);
+      if(hrs > 1 && used > 0) rows.push(`<div class="kv"><span>Скорость расхода</span><b>${num(used / hrs, 1)} г/ч</b></div>`);
+    }
+  }
+  if(hist.length > 1){
+    const d24 = t.weight - hist[0].w;
+    rows.push(`<div class="kv"><span>Изменение за ${Math.round((nowMs() - hist[0].ts) / 3600000)} ч</span><b>${d24 >= 0 ? "+" : ""}${num(d24, 0)} г</b></div>`);
+  }
+  rows.push(`<p class="small muted">Вес падает между поливами за счёт испарения и потребления воды растением. Быстрое падение — жарко или сухо, почти без изменений — субстрат переувлажнён.</p>`);
+  box.innerHTML = rows.join("");
+}
+
+/* ===================== ГРАФИКИ ===================== */
+const charts = {};
+Chart.defaults.font.family = "Nunito, system-ui, sans-serif";
+Chart.defaults.color = "#6c8272";
+function lineChart(id, labels, datasets, yOpts){
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id), {
+    type: "line",
+    data: {labels, datasets: datasets.map(d => ({pointRadius:0, borderWidth:2, tension:.3, fill:false, spanGaps:true, ...d}))},
+    options: {
+      responsive:true, maintainAspectRatio:false, animation:false,
+      interaction:{mode:"index", intersect:false},
+      plugins:{legend:{labels:{boxWidth:12, usePointStyle:true}}},
+      scales:{ x:{ticks:{maxTicksLimit:8}, grid:{display:false}}, ...yOpts }
+    }
+  });
+}
+async function loadCharts(){
+  const hrs = S.chartHours;
+  const data = await loadHistory(hrs);
+  S.chartData = data;
+  const labels = data.map(p => hrs > 24 ? fmtDateTime(p.ts) : fmtTime(p.ts));
+  const grid = {color:"#eef3ef"};
+  lineChart("chClimate", labels, [
+    {label:"Температура, °C", data:data.map(p => p.t ?? null), borderColor:"#ff8a50", yAxisID:"y"},
+    {label:"Влажность, %", data:data.map(p => p.h ?? null), borderColor:"#29a8e0", yAxisID:"y1"}
+  ], {y:{grid, position:"left"}, y1:{grid:{display:false}, position:"right"}});
+  lineChart("chVpd", labels, [
+    {label:"VPD, кПа", data:data.map(p => { const v = vpd(p.t, p.h); return v === null ? null : +v.toFixed(2); }),
+      borderColor:"#43a047", backgroundColor:"rgba(76,175,80,.12)", fill:true}
+  ], {y:{grid, suggestedMin:0}});
+  lineChart("chAir", labels, [
+    {label:"CO₂, ppm", data:data.map(p => p.co2 ?? null), borderColor:"#66bb6a", yAxisID:"y"},
+    {label:"TVOC, ppb", data:data.map(p => p.tvoc ?? null), borderColor:"#9575cd", yAxisID:"y1"}
+  ], {y:{grid, position:"left"}, y1:{grid:{display:false}, position:"right"}});
+  lineChart("chWeight", labels, [
+    {label:"Вес, г", data:data.map(p => p.w ?? null), borderColor:"#ab47bc", backgroundColor:"rgba(171,71,188,.08)", fill:true}
+  ], {y:{grid}});
+}
+document.querySelectorAll("#rangeSeg button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.toggle("on", x === b));
+  S.chartHours = +b.dataset.h; loadCharts();
+});
+$("btnCsv").onclick = () => {
+  if(!S.chartData.length) return toast("Нет данных за выбранный период");
+  const head = "timestamp;datetime;temperature_C;humidity_pct;vpd_kPa;co2_ppm;tvoc_ppb;weight_g;uv_pct";
+  const rows = S.chartData.map(p => {
+    const v = vpd(p.t, p.h);
+    return [p.ts, new Date(p.ts).toLocaleString("ru-RU"), p.t ?? "", p.h ?? "", v === null ? "" : v.toFixed(3),
+            p.co2 ?? "", p.tvoc ?? "", p.w ?? "", p.uv ?? ""].join(";");
+  });
+  const blob = new Blob(["\ufeff" + [head, ...rows].join("\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `growbox_${S.chartHours}h_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* ===================== УПРАВЛЕНИЕ ===================== */
+let ctlDirty = false;
+(function initTz(){
+  const sel = $("cTz");
+  for(let h = -12; h <= 14; h++){
+    const o = document.createElement("option");
+    o.value = h * 60; o.textContent = "UTC" + (h >= 0 ? "+" : "−") + Math.abs(h) + (h === 3 ? " (Москва)" : "");
+    sel.appendChild(o);
+  }
+})();
+function setDirty(v){ ctlDirty = v; $("saveBar").hidden = !v; }
+$("ctlForm").addEventListener("input", e => { if(e.target.id !== "calMl") setDirty(true); });
+$("ctlForm").addEventListener("change", e => { if(e.target.id === "calMl") return; setDirty(true); $("uvHours").textContent = uvHoursText($("cUvStart").value, $("cUvEnd").value); });
+
+function renderTimes(times){
+  const box = $("cTimes");
+  box.innerHTML = times.map((tm, i) => `<div class="time-item"><input type="time" value="${esc(tm)}" data-i="${i}">
+    <button type="button" data-del="${i}" title="Удалить">×</button></div>`).join("") +
+    (times.length < 6 ? `<button type="button" class="btn light sm" id="btnAddTime">＋ время</button>` : "");
+  box.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    const t = readTimes(); t.splice(+b.dataset.del, 1); renderTimes(t); setDirty(true);
+  });
+  const add = $("btnAddTime");
+  if(add) add.onclick = () => { const t = readTimes(); t.push("12:00"); renderTimes(t); setDirty(true); };
+}
+function readTimes(){
+  return [...$("cTimes").querySelectorAll("input[type=time]")].map(i => normTime(i.value)).filter(Boolean);
+}
+function fillControlForm(force){
+  if(ctlDirty && !force) return;
+  const s = S.settings || {}, w = s.watering || {}, u = s.uv || {}, c = s.climate || {}, tg = s.notify?.telegram || {};
+  $("cWaterEnabled").checked = w.enabled !== false;
+  renderTimes(w.times || ["09:00"]);
+  $("cVolume").value = w.volumeMl ?? 100;
+  $("cEveryDays").value = w.everyDays ?? 1;
+  $("cFlow").value = w.flowMlPerSec ?? 10;
+  $("cUvMode").value = u.mode || "auto";
+  $("cUvStart").value = u.start || "08:00";
+  $("cUvEnd").value = u.end || "18:00";
+  $("cUvBright").value = u.brightness ?? 100;
+  $("uvHours").textContent = uvHoursText($("cUvStart").value, $("cUvEnd").value);
+  $("cTMin").value = c.tempMin ?? 20; $("cTMax").value = c.tempMax ?? 26;
+  $("cHMin").value = c.humMin ?? 50;  $("cHMax").value = c.humMax ?? 70;
+  $("cCo2Max").value = c.co2Max ?? 1200;
+  $("cTgEnabled").checked = !!tg.enabled;
+  $("cTgToken").value = tg.token || "";
+  $("cTgChat").value = tg.chatId || "";
+  $("cTgWater").checked = !!tg.notifyWatering;
+  $("cDoorMin").value = s.door?.warnMinutes ?? 5;
+  $("cTz").value = s.timezoneMin ?? 180;
+  setDirty(false);
+}
+$("btnCtlReset").onclick = () => fillControlForm(true);
+$("ctlForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const times = readTimes();
+  const c = {tempMin:+$("cTMin").value, tempMax:+$("cTMax").value, humMin:+$("cHMin").value, humMax:+$("cHMax").value, co2Max:+$("cCo2Max").value};
+  if(c.tempMin >= c.tempMax || c.humMin >= c.humMax) return toast("Минимум должен быть меньше максимума");
+  if($("cWaterEnabled").checked && !times.length) return toast("Добавьте хотя бы одно время полива");
+  const patch = {
+    watering:{enabled:$("cWaterEnabled").checked, times:[...new Set(times)].sort(),
+      volumeMl:Math.max(1, Math.round(+$("cVolume").value)), everyDays:Math.min(14, Math.max(1, Math.round(+$("cEveryDays").value))),
+      flowMlPerSec:Math.max(0.1, +$("cFlow").value)},
+    uv:{mode:$("cUvMode").value, start:$("cUvStart").value, end:$("cUvEnd").value, brightness:Math.min(100, Math.max(0, Math.round(+$("cUvBright").value)))},
+    climate:c,
+    door:{warnMinutes:Math.max(1, Math.round(+$("cDoorMin").value))},
+    timezoneMin:+$("cTz").value,
+    notify:{telegram:{enabled:$("cTgEnabled").checked, token:$("cTgToken").value.trim(), chatId:$("cTgChat").value.trim(), notifyWatering:$("cTgWater").checked}}
+  };
+  await saveSettings(patch);
+  setDirty(false);
+  toast("Настройки сохранены — бокс применит их в течение 5 секунд");
+});
+
+$("btnCalRun").onclick = async () => {
+  await sendCommand("calibrate", {seconds:10, ts:Date.now()});
+  toast("Насос включится на 10 секунд");
+};
+$("btnCalSave").onclick = async () => {
+  const ml = +$("calMl").value;
+  if(!(ml > 0)) return toast("Введите, сколько миллилитров налилось");
+  const flow = +(ml / 10).toFixed(2);
+  await saveSettings({"watering/flowMlPerSec": flow});
+  $("cFlow").value = flow; $("calMl").value = "";
+  toast(`Производительность насоса: ${flow} мл/с — сохранено`);
+};
+$("btnTgTest").onclick = async () => {
+  if(ctlDirty) return toast("Сначала сохраните настройки");
+  await sendCommand("testTelegram", true); toast("Бокс отправит тестовое сообщение");
+};
+$("btnTare").onclick = async () => {
+  if(!confirm("Обнулить весы? Уберите с платформы всё, что не должно учитываться.")) return;
+  await sendCommand("tare", true); toast("Весы будут обнулены");
+};
+$("btnReboot").onclick = async () => {
+  if(!confirm("Перезагрузить бокс?")) return;
+  await sendCommand("reboot", true); toast("Бокс перезагружается");
+};
+function renderDevInfo(){
+  const t = S.telemetry;
+  if(!t){ $("devInfo").textContent = "Бокс ещё не отправлял данные"; return; }
+  const up = t.uptime || 0;
+  $("devInfo").innerHTML = `Прошивка: <b>${esc(t.fw || "?")}</b> · IP: <b>${esc(t.ip || "?")}</b> · Wi-Fi: <b>${t.rssi ?? "?"} дБм</b><br>
+    Работает без перезагрузки: <b>${Math.floor(up / 86400)} дн ${Math.floor(up % 86400 / 3600)} ч ${Math.floor(up % 3600 / 60)} мин</b> ·
+    Последние данные: <b>${ago(t.ts)}</b><br>Обновление прошивки по воздуху: Arduino IDE → Порт → growbox (сетевой).`;
+}
+
+/* ===================== ПРЕСЕТЫ ===================== */
+function renderPresets(){
+  const active = S.settings?.presetId;
+  $("presetGrid").innerHTML = allPresets().map(p => {
+    const c = p.climate || {}, w = p.watering || {}, u = p.uv || {};
+    return `<div class="card preset ${p.id === active ? "active" : ""}">
+      <div class="ptitle"><div class="picon">${esc(p.icon || "🌱")}</div>
+        <div style="flex:1;min-width:0">${esc(p.name)}<div class="small muted" style="font-weight:600">${esc(p.desc || "")}</div></div>
+        ${p.custom ? `<span class="tag">свой</span>` : ""}</div>
+      <div class="params">
+        <div>🌡️ ${c.tempMin}–${c.tempMax} °C</div><div>💦 ${c.humMin}–${c.humMax} %</div>
+        <div>💧 ${(w.times || []).join(", ")}</div><div>🪣 ${w.volumeMl} мл${w.everyDays > 1 ? ` / ${w.everyDays} дн` : ""}</div>
+        <div>☀️ ${u.start}–${u.end}</div><div>🫧 CO₂ ≤ ${c.co2Max}</div>
+      </div>
+      <div class="actions">
+        ${p.id === active ? `<span class="pill">✓ Активен</span>` : `<button class="btn sm" data-apply="${esc(p.id)}">Применить</button>`}
+        ${p.custom ? `<button class="btn ghost sm" data-edit="${esc(p.id)}">Изменить</button><button class="btn danger sm" data-del="${esc(p.id)}">Удалить</button>`
+                   : `<button class="btn ghost sm" data-copy="${esc(p.id)}">Копировать и изменить</button>`}
+      </div></div>`;
+  }).join("");
+  const find = id => allPresets().find(p => p.id === id);
+  document.querySelectorAll("[data-apply]").forEach(b => b.onclick = () => applyPreset(find(b.dataset.apply)));
+  document.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openPresetDlg(find(b.dataset.edit), b.dataset.edit));
+  document.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const p = find(b.dataset.copy); openPresetDlg({...p, name:p.name + " (мой)"}, null); });
+  document.querySelectorAll("#presetGrid [data-del]").forEach(b => b.onclick = async () => {
+    if(!confirm("Удалить этот пресет?")) return;
+    await base.child("presets/" + b.dataset.del).remove(); toast("Пресет удалён");
+  });
+}
+async function applyPreset(p){
+  if(!p) return;
+  if(!confirm(`Применить пресет «${p.name}»? Цели климата, полив и UV будут заменены.`)) return;
+  await saveSettings({
+    presetId:p.id, presetName:p.name, presetIcon:p.icon || "🌱", presetLatin:translit(p.name) || "Preset",
+    climate:{...p.climate},
+    "watering/times":p.watering.times, "watering/everyDays":p.watering.everyDays, "watering/volumeMl":p.watering.volumeMl,
+    "uv/start":p.uv.start, "uv/end":p.uv.end, "uv/brightness":p.uv.brightness
+  });
+  setDirty(false);
+  toast(`Пресет «${p.name}» применён`);
+}
+
+let editingPresetId = null;
+(function initIcons(){ $("pIcon").innerHTML = ICONS.map(i => `<option>${i}</option>`).join(""); })();
+function openPresetDlg(p, id){
+  editingPresetId = id;
+  $("pdTitle").textContent = id ? "Изменить пресет" : "Новый пресет";
+  const c = p?.climate || {}, w = p?.watering || {}, u = p?.uv || {};
+  $("pName").value = p?.name || "";
+  $("pIcon").value = ICONS.includes(p?.icon) ? p.icon : "🌱";
+  $("pDesc").value = p?.desc || "";
+  $("pTMin").value = c.tempMin ?? 20; $("pTMax").value = c.tempMax ?? 26;
+  $("pHMin").value = c.humMin ?? 50;  $("pHMax").value = c.humMax ?? 70;
+  $("pCo2").value = c.co2Max ?? 1200;
+  $("pTimes").value = (w.times || ["09:00"]).join(", ");
+  $("pVol").value = w.volumeMl ?? 100; $("pEvery").value = w.everyDays ?? 1;
+  $("pUvStart").value = u.start || "08:00"; $("pUvEnd").value = u.end || "20:00"; $("pUvBright").value = u.brightness ?? 100;
+  $("pErr").textContent = "";
+  $("presetDlg").showModal();
+}
+$("btnPresetNew").onclick = () => openPresetDlg(null, null);
+$("btnPresetFromCurrent").onclick = () => {
+  const s = S.settings || {};
+  openPresetDlg({name:"", icon:s.presetIcon, climate:s.climate, watering:s.watering, uv:s.uv}, null);
+};
+$("pCancel").onclick = () => $("presetDlg").close();
+$("pSave").onclick = async () => {
+  const err = m => { $("pErr").textContent = m; };
+  const name = $("pName").value.trim();
+  if(!name) return err("Введите название");
+  const times = $("pTimes").value.split(/[,;\s]+/).filter(Boolean).map(normTime);
+  if(!times.length || times.some(t => !t)) return err("Время полива в формате ЧЧ:ММ через запятую, например 08:00, 20:00");
+  if(times.length > 6) return err("Не больше 6 поливов в день");
+  const p = {
+    name, icon:$("pIcon").value, desc:$("pDesc").value.trim(),
+    climate:{tempMin:+$("pTMin").value, tempMax:+$("pTMax").value, humMin:+$("pHMin").value, humMax:+$("pHMax").value, co2Max:+$("pCo2").value},
+    watering:{times:[...new Set(times)].sort(), volumeMl:Math.round(+$("pVol").value), everyDays:Math.min(14, Math.max(1, Math.round(+$("pEvery").value)))},
+    uv:{start:$("pUvStart").value, end:$("pUvEnd").value, brightness:Math.min(100, Math.max(0, Math.round(+$("pUvBright").value)))},
+    updated:Date.now()
+  };
+  if(p.climate.tempMin >= p.climate.tempMax || p.climate.humMin >= p.climate.humMax) return err("Минимум должен быть меньше максимума");
+  if(!(p.watering.volumeMl > 0)) return err("Укажите объём полива");
+  const ref = editingPresetId ? base.child("presets/" + editingPresetId) : base.child("presets").push();
+  await ref.set(p);
+  $("presetDlg").close();
+  toast("Пресет сохранён");
+  // если редактировали активный пресет — сразу применяем изменения
+  if(editingPresetId && editingPresetId === S.settings?.presetId){
+    await saveSettings({presetName:p.name, presetIcon:p.icon, presetLatin:translit(p.name) || "Preset", climate:p.climate,
+      "watering/times":p.watering.times, "watering/everyDays":p.watering.everyDays, "watering/volumeMl":p.watering.volumeMl,
+      "uv/start":p.uv.start, "uv/end":p.uv.end, "uv/brightness":p.uv.brightness});
+    toast("Активный пресет обновлён и применён");
+  }
+};
+
+/* ===================== МОДУЛИ ===================== */
+const modCards = {};   // id -> {el, dirty}
+function modAutoText(type){
+  const c = S.settings?.climate || {};
+  if(type === "humidifier") return `Авто: включается ниже ${c.humMin ?? "?"}% и выключается на ${c.humMin !== undefined ? Math.round((c.humMin + c.humMax) / 2) : "?"}% (по пресету).`;
+  if(type === "heater") return `Авто: греет ниже ${c.tempMin ?? "?"} °C до ${c.tempMin !== undefined ? ((c.tempMin + c.tempMax) / 2).toFixed(1) : "?"} °C (по пресету).`;
+  if(type === "fan") return `Авто: включается, если T > ${c.tempMax ?? "?"} °C, влажность > ${c.humMax ?? "?"}% или CO₂ > ${c.co2Max ?? "?"} ppm, плюс проветривание по расписанию.`;
+  return "";
+}
+function modFormHtml(id, type){
+  const common = `
+    <div class="fields" style="grid-template-columns:2fr 1fr">
+      <div><label class="f">Название</label><input type="text" name="name" maxlength="40"></div>
+      <div><label class="f">Режим</label><select name="mode"><option value="auto">Авто</option><option value="on">Вкл</option><option value="off">Выкл</option></select></div>
+    </div>
+    <p class="small muted" data-auto></p>
+    <label class="switch small"><input type="checkbox" name="customEnabled"> Свои пороги вместо пресета</label>
+    <div style="height:10px"></div>`;
+  let spec = "";
+  if(type === "humidifier" || type === "heater"){
+    const u = type === "humidifier" ? "%" : "°C";
+    spec = `<div class="fields">
+      <div><label class="f">Включать ниже, ${u}</label><input type="number" step="0.5" name="low"></div>
+      <div><label class="f">Выключать при, ${u}</label><input type="number" step="0.5" name="high"></div>
+      <div><label class="f">Макс. работа, мин</label><input type="number" name="maxRunMin" min="0"></div>
+      <div><label class="f">Пауза, мин</label><input type="number" name="restMin" min="0"></div>
+      ${type === "heater" ? `<div><label class="f">Аварийный макс, °C</label><input type="number" step="0.5" name="maxTemp"></div>` : ""}
+    </div>`;
+  } else if(type === "fan"){
+    spec = `<div class="fields">
+      <div><label class="f">T макс, °C</label><input type="number" step="0.5" name="tempMax"></div>
+      <div><label class="f">Влажн. макс, %</label><input type="number" name="humMax"></div>
+      <div><label class="f">CO₂ макс, ppm</label><input type="number" step="50" name="co2Max"></div>
+      <div><label class="f">Скорость, %</label><input type="number" name="speed" min="0" max="100"></div>
+      <div><label class="f">Проветривать каждые, мин</label><input type="number" name="everyMin" min="0"></div>
+      <div><label class="f">На сколько, мин</label><input type="number" name="forMin" min="0"></div>
+    </div>`;
+  } else {
+    spec = `<p class="small muted">Настройки этого типа модуля появятся в следующей версии страницы.</p>`;
+  }
+  return `<form class="mform" data-id="${esc(id)}">${common}${spec}
+    <div class="row" style="margin-top:14px">
+      <button type="submit" class="btn sm">💾 Сохранить</button>
+      <button type="button" class="btn light sm" data-test>▶ Тест 10 с</button>
+      <button type="button" class="btn danger sm" data-remove>Удалить</button>
+    </div></form>`;
+}
+function fillModForm(form, m){
+  const s = m.settings || {}, c = s.custom || {}, sf = s.safety || {}, f = s.fan || {};
+  const set = (n, v) => { const el = form.elements[n]; if(!el) return; if(el.type === "checkbox") el.checked = !!v; else el.value = v ?? ""; };
+  set("name", s.name); set("mode", s.mode || "auto"); set("customEnabled", c.enabled);
+  set("low", c.low); set("high", c.high); set("maxRunMin", sf.maxRunMin); set("restMin", sf.restMin); set("maxTemp", sf.maxTemp);
+  set("tempMax", c.tempMax); set("humMax", c.humMax); set("co2Max", c.co2Max);
+  set("speed", f.speed); set("everyMin", f.everyMin); set("forMin", f.forMin);
+}
+function readModForm(form, type){
+  const g = n => form.elements[n], nv = n => g(n) ? +g(n).value : undefined;
+  const out = {name:g("name").value.trim() || "Модуль", mode:g("mode").value, custom:{enabled:g("customEnabled").checked}};
+  if(type === "humidifier" || type === "heater"){
+    out.custom.low = nv("low"); out.custom.high = nv("high");
+    out.safety = {maxRunMin:Math.max(0, Math.round(nv("maxRunMin"))), restMin:Math.max(0, Math.round(nv("restMin")))};
+    if(type === "heater") out.safety.maxTemp = nv("maxTemp");
+  } else if(type === "fan"){
+    out.custom.tempMax = nv("tempMax"); out.custom.humMax = nv("humMax"); out.custom.co2Max = nv("co2Max");
+    out.fan = {speed:Math.min(100, Math.max(0, Math.round(nv("speed")))), everyMin:Math.max(0, Math.round(nv("everyMin"))), forMin:Math.max(0, Math.round(nv("forMin")))};
+  }
+  return out;
+}
+function renderModules(){
+  const grid = $("moduleGrid");
+  const ids = Object.keys(S.modules);
+  Object.keys(modCards).forEach(id => { if(!S.modules[id]){ modCards[id].el.remove(); delete modCards[id]; } });
+  ids.forEach(id => {
+    const m = S.modules[id], type = m.info?.type || "unknown";
+    const tp = MOD_TYPES[type] || {icon:"🧩", label:"Модуль", color:"var(--green-l)"};
+    if(!modCards[id]){
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML = `<div class="mhead"><div class="modicon" style="background:${tp.color}">${tp.icon}</div>
+          <div style="flex:1;min-width:0"><b data-name></b><div class="small muted">${tp.label} · ${esc(id)}</div></div>
+          <span class="pill" data-online></span></div>
+        <div class="mstate" data-state></div>
+        <div class="hint" data-live></div>
+        <div class="sep"></div>${modFormHtml(id, type)}`;
+      grid.appendChild(el);
+      const card = {el, dirty:false, type};
+      modCards[id] = card;
+      const form = el.querySelector("form");
+      form.addEventListener("input", () => card.dirty = true);
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        await base.child("modules/" + id + "/settings").update(readModForm(form, type));
+        card.dirty = false; toast("Настройки модуля сохранены");
+      });
+      el.querySelector("[data-test]").onclick = async () => { await base.child("modules/" + id + "/command").set({test:10}); toast("Модуль включится на 10 секунд"); };
+      el.querySelector("[data-remove]").onclick = async () => {
+        if(!confirm("Удалить модуль со страницы? Если он включён, то зарегистрируется снова с настройками по умолчанию.")) return;
+        await base.child("modules/" + id).remove(); toast("Модуль удалён");
+      };
+    }
+    const card = modCards[id];
+    if(!card.dirty) fillModForm(card.el.querySelector("form"), m);
+    card.el.querySelector("[data-name]").textContent = m.settings?.name || id;
+    card.el.querySelector("[data-auto]").textContent = modAutoText(type);
+  });
+  grid.querySelectorAll(".empty").forEach(e => e.remove());
+  if(!ids.length) grid.innerHTML = `<div class="card empty">Модули пока не подключены. Установите модуль на ленту 5 В — он появится здесь автоматически.</div>`;
+  renderModulesLive();
+}
+function renderModulesLive(){
+  Object.entries(modCards).forEach(([id, card]) => {
+    const m = S.modules[id]; if(!m) return;
+    const st = m.state || {}, onl = isModuleOnline(m);
+    const on = card.el.querySelector("[data-online]");
+    on.className = "pill " + (onl ? "" : "bad"); on.textContent = onl ? "онлайн" : "офлайн";
+    const chips = [];
+    if(onl) chips.push(`<span class="pill ${st.on ? "" : "gray"}">${st.on ? "● Работает" : "○ Выключен"}</span>`);
+    if(st.speed !== undefined && st.on) chips.push(`<span class="pill info">скорость ${st.speed}%</span>`);
+    if(st.resting) chips.push(`<span class="pill warn">пауза</span>`);
+    if(st.overheat) chips.push(`<span class="pill bad">перегрев</span>`);
+    if(onl && st.dataFresh === false) chips.push(`<span class="pill warn">нет данных бокса</span>`);
+    card.el.querySelector("[data-state]").innerHTML = chips.join("");
+    card.el.querySelector("[data-live]").innerHTML = onl
+      ? `Причина: <b>${esc(st.reason || "—")}</b> · сигнал ${st.rssi ?? "?"} дБм · обновлено ${ago(st.lastSeen)}`
+      : `Нет связи ${ago(st.lastSeen)}. Проверьте, стоит ли модуль на ленте питания.`;
+  });
+}
+
+/* ===================== ЖУРНАЛ ===================== */
+function renderLog(){
+  const f = S.logFilter;
+  const list = S.events.filter(e => f === "all" ? true : f === "alarm" ? (e.level === "alarm" || e.level === "warn") : e.type === f);
+  const icon = e => e.type === "watering" ? "💧" : e.type === "door" ? "🚪" : e.type === "water" ? "🚰" : e.type === "module" ? "🧩" :
+                    e.type === "sensor" ? "📟" : e.type === "boot" ? "🔌" : e.type === "settings" ? "⚙️" : e.type === "calibration" ? "🧪" :
+                    e.level === "alarm" ? "🚨" : "ℹ️";
+  const src = e => e.source && e.source !== "box" ? (S.modules[e.source]?.settings?.name || e.source) : "Бокс";
+  $("logList").innerHTML = list.length ? list.map(e => `<div class="ev lv-${esc(e.level)}"><div class="ic">${icon(e)}</div>
+      <div style="flex:1;min-width:0"><div>${esc(e.msg)}</div><div class="t">${e.ts ? fmtDateTime(e.ts) : ""} · ${esc(src(e))}</div></div></div>`).join("")
+    : `<div class="empty">Событий нет</div>`;
+}
+document.querySelectorAll("#logSeg button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#logSeg button").forEach(x => x.classList.toggle("on", x === b));
+  S.logFilter = b.dataset.f; renderLog();
+});
+</script>
+</body>
+</html>
