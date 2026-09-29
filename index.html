@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Grow Box</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -16,12 +16,12 @@
 /* Светлый рабочий интерфейс теплицы: белые карточки на мятном фоне, зелёный акцент,
    голубой для воды, фиолетовый для UV и заметок, семантические цвета для тревог. */
 :root{
-  --bg:#f2f8f3; --card:#ffffff; --line:#e1ede3; --line2:#d3e3d6; --text:#1d3223; --muted:#687e6e; --soft:#f6faf6;
-  --green:#4caf50; --green-d:#2e7d32; --green-l:#e8f5e9; --mint:#c8e6c9;
-  --water:#1e9bd7; --water-l:#e3f4fc; --uv:#7e57c2; --uv-l:#efe9f8;
-  --warn:#c98a00; --warn-l:#fff6dc; --danger:#d93c35; --danger-l:#fdecea; --heat:#f06a3c; --heat-l:#fff0ea;
-  --font:'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --radius:18px; --shadow:0 2px 10px rgba(46,125,50,.07),0 1px 2px rgba(0,0,0,.04);
+  --bg:#f4f6f4; --card:#ffffff; --line:#e4e9e4; --line2:#d5ddd6; --text:#1f2a22; --muted:#6a766d; --soft:#f6f8f6;
+  --green:#3f7d4b; --green-d:#2d5e37; --green-l:#ebf2ec; --mint:#cfe1d3;
+  --water:#2f86b8; --water-l:#ebf4f9; --uv:#6a58a6; --uv-l:#f1eef8;
+  --warn:#a87300; --warn-l:#fbf5e5; --danger:#c0392b; --danger-l:#fbeceb; --heat:#d9642f; --heat-l:#fcf0ea;
+  --font:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radius:12px; --shadow:0 1px 2px rgba(20,40,25,.05);
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -246,6 +246,65 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
 .photo-full{max-width:100%;border-radius:14px;display:block}
 @media (max-width:600px){ .metric .val{font-size:24px} .hero-title{font-size:20px} main{padding:14px 16px 70px} }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+
+/* ---------- сдержанная тема ---------- */
+h2,h3,.hero-title,.brand{font-weight:600;letter-spacing:-.01em}
+.hero{background:var(--card)}
+.quick{background:var(--soft);border-radius:12px}
+.btn{font-weight:600;border-radius:10px}
+.btn.light{background:var(--card);color:var(--text);border:1px solid var(--line2)}
+.btn.uv{background:var(--card);color:var(--uv);border:1px solid var(--line2)}
+.btn.danger{background:var(--card);color:var(--danger);border:1px solid #efc9c5}
+.btn.water{background:var(--water)}
+.pill{font-weight:600}
+.chip{background:var(--soft);color:var(--text);border:1px solid var(--line);font-weight:600}
+.chip .dot{color:var(--green)}
+.chip.off .dot{color:var(--danger)}
+.metric{border-left:3px solid transparent}
+.metric.warn,.metric.bad,.metric.water,.metric.uv{background:var(--card)}
+.metric.warn{border-color:var(--line);border-left-color:var(--warn)}
+.metric.bad{border-color:var(--line);border-left-color:var(--danger)}
+.metric.water{border-left-color:var(--water)}
+.metric.uv{border-left-color:var(--uv)}
+.metric .lbl,.gstat .l,.subhead,.menu h4,table.cmp th{letter-spacing:.05em;font-weight:600}
+.metric .val{font-weight:600}
+.stage.now{background:var(--green-d);border-color:var(--green-d)}
+.preset.active{border:1.5px solid var(--green);box-shadow:none}
+.demo-banner{background:var(--soft);color:var(--muted);border:1px solid var(--line);border-left:3px solid var(--uv);font-weight:500}
+.alarm{font-weight:600;border-left-width:3px}
+.tag{background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.tag.custom{color:var(--uv);border-color:#ddd6ef}
+.tag.library{color:var(--water);border-color:#cfe3ef}
+nav button.active{border-bottom-width:2px}
+.pico{background:var(--soft);border:1px solid var(--line)}
+.stage-edit{background:var(--soft);border-radius:12px}
+
+/* ---------- новое ---------- */
+.brand-wrap{display:flex;align-items:center;gap:8px}
+.brand-wrap .menu{left:0;right:auto}
+.menu .mi.cur{background:var(--green-l)}
+.menu .mi b{font-weight:600}
+.progress{height:8px;border-radius:8px;background:var(--soft);border:1px solid var(--line);overflow:hidden;margin:14px 0 6px}
+.progress div{height:100%;background:var(--green)}
+.result{margin:12px 0 4px;padding:12px 14px;border-radius:10px;background:var(--green-l);font-size:15px}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:14px}
+.lib-row{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.lib-list{max-height:55vh;overflow:auto}
+.ref-panel{border:1px solid var(--line2);border-radius:12px;padding:14px;background:var(--soft);margin:14px 0}
+.ref-results{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.ref-item{border:1px solid var(--line2);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:500}
+.ref-item.on{border-color:var(--green);background:var(--green-l)}
+.plant-info{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.chart-head{margin-bottom:8px}
+.chart-head h3{margin:0}
+.icon-btn.sm{width:30px;height:30px;border-radius:8px}
+.icon-btn svg{width:16px;height:16px}
+.icon-btn.on{color:var(--green);border-color:var(--green);background:var(--green-l)}
+.chart-card.main{grid-column:1/-1}
+.chart-card.main .chart-box{height:420px}
+.chart-big{position:relative;height:min(70vh,640px)}
+.view-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.view-head .back{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:600;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -263,7 +322,17 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
 <div id="app" hidden>
   <header>
     <div class="head-in">
-      <div class="brand"><span class="leaf"></span>Grow Box</div>
+      <div class="brand-wrap menu-wrap">
+        <div class="brand"><span class="leaf"></span>Grow Box</div>
+        <button class="icon-btn sm" id="btnAppMenu" aria-label="Инструменты">•••</button>
+        <div class="menu" id="appMenu" hidden>
+          <h4>Инструменты</h4>
+          <div class="mi" data-view="research"><div><b>Исследование</b><div class="small muted">Опыт с параметрами и сравнение «до / во время»</div></div></div>
+          <div class="mi" data-view="adapt"><div><b>Адаптация</b><div class="small muted">Плавный переход к новым условиям</div></div></div>
+          <div class="mi" data-view="calc"><div><b>Калькуляторы</b><div class="small muted">VPD, DLI, удобрения, потребность в воде</div></div></div>
+          <div class="mi" data-view="diag"><div><b>Диагностика и калибровка</b><div class="small muted">Датчики, весы, порог воды</div></div></div>
+        </div>
+      </div>
       <div class="chips">
         <span id="chipDevice" class="chip gray"><span class="dot"></span>Бокс: ожидание</span>
         <span id="chipGrow" class="chip">—</span>
@@ -329,11 +398,11 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
         </div>
       </div>
       <p class="small muted" style="margin-top:-4px">Колесо мыши или два пальца — масштаб, перетаскивание — сдвиг по времени. Все графики двигаются вместе.</p>
-      <div class="grid two">
-        <div class="card"><h3>Температура и влажность</h3><div class="chart-box"><canvas id="chClimate"></canvas></div></div>
-        <div class="card"><h3>VPD</h3><div class="chart-box"><canvas id="chVpd"></canvas></div></div>
-        <div class="card"><h3>CO₂ и TVOC</h3><div class="chart-box"><canvas id="chAir"></canvas></div></div>
-        <div class="card"><h3>Вес</h3><div class="chart-box"><canvas id="chWeight"></canvas></div></div>
+      <div class="grid two" id="chartGrid">
+        <div class="card chart-card" data-chart="chClimate"><div class="between chart-head"><h3>Температура и влажность</h3><div class="row" style="gap:6px"><button class="icon-btn sm" data-pin title="Сделать главным"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button><button class="icon-btn sm" data-expand title="Развернуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div></div><div class="chart-box"><canvas id="chClimate"></canvas></div></div>
+        <div class="card chart-card" data-chart="chVpd"><div class="between chart-head"><h3>VPD</h3><div class="row" style="gap:6px"><button class="icon-btn sm" data-pin title="Сделать главным"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button><button class="icon-btn sm" data-expand title="Развернуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div></div><div class="chart-box"><canvas id="chVpd"></canvas></div></div>
+        <div class="card chart-card" data-chart="chAir"><div class="between chart-head"><h3>CO₂ и TVOC</h3><div class="row" style="gap:6px"><button class="icon-btn sm" data-pin title="Сделать главным"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button><button class="icon-btn sm" data-expand title="Развернуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div></div><div class="chart-box"><canvas id="chAir"></canvas></div></div>
+        <div class="card chart-card" data-chart="chWeight"><div class="between chart-head"><h3>Вес</h3><div class="row" style="gap:6px"><button class="icon-btn sm" data-pin title="Сделать главным"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button><button class="icon-btn sm" data-expand title="Развернуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div></div><div class="chart-box"><canvas id="chWeight"></canvas></div></div>
       </div>
       <div class="chart-legend">
         <span><i style="background:var(--water)"></i>Полив</span>
@@ -459,9 +528,14 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
         <div class="row">
           <button class="btn light sm" id="btnPresetFromCurrent">Сохранить текущие настройки</button>
           <button class="btn sm" id="btnPresetNew">Свой пресет</button>
+          <div class="menu-wrap">
+            <button class="icon-btn" id="btnPresetMenu" aria-label="Библиотека и фильтр пресетов">•••</button>
+            <div class="menu" id="presetMenu" hidden></div>
+          </div>
         </div>
       </div>
       <p class="muted small">Пресет задаёт этапы роста (климат, полив и свет на каждом этапе) и какие модули нужны. Этапы переключаются сами по дням после нажатия «Старт». Значения стартовые, их можно поправить под свой сорт.</p>
+      <div class="row" style="margin-bottom:12px"><span class="pill gray" id="presetFilterPill"></span></div>
       <div class="grid presets" id="presetGrid"></div>
     </section>
 
@@ -502,6 +576,26 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
       </div>
       <div id="logGrows" hidden></div>
     </section>
+
+    <section id="tab-research" class="tab">
+      <div class="view-head"><button class="back" data-back>← Обзор</button><h2 style="margin:0">Исследования</h2></div>
+      <div id="researchBody"></div>
+    </section>
+
+    <section id="tab-adapt" class="tab">
+      <div class="view-head"><button class="back" data-back>← Обзор</button><h2 style="margin:0">Адаптация</h2></div>
+      <div id="adaptBody"></div>
+    </section>
+
+    <section id="tab-calc" class="tab">
+      <div class="view-head"><button class="back" data-back>← Обзор</button><h2 style="margin:0">Калькуляторы</h2></div>
+      <div id="calcBody"></div>
+    </section>
+
+    <section id="tab-diag" class="tab">
+      <div class="view-head"><button class="back" data-back>← Обзор</button><h2 style="margin:0">Диагностика и калибровка</h2></div>
+      <div id="diagBody"></div>
+    </section>
   </main>
 </div>
 
@@ -518,7 +612,22 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
 
 <dialog id="presetDlg" class="wide">
   <form class="dlg" id="presetForm" onsubmit="return false">
-    <h2 id="pdTitle">Новый пресет</h2>
+    <div class="between" style="margin-bottom:10px">
+      <h2 id="pdTitle" style="margin:0">Новый пресет</h2>
+      <div class="menu-wrap">
+        <button type="button" class="icon-btn" id="btnRefMenu" aria-label="Справочник растений">•••</button>
+        <div class="menu" id="refMenu" hidden>
+          <div class="mi" id="miRef"><div><b>Справочник растений</b><div class="small muted">Найти температуру, влажность, свет и полив для растения</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ref-panel" id="refPanel" hidden>
+      <div class="between"><b>Справочник растений</b><button type="button" class="btn ghost sm" id="refClose">Скрыть</button></div>
+      <input type="text" id="refSearch" placeholder="Название: томат, манго, базилик, орхидея…" style="margin-top:10px">
+      <div class="ref-results" id="refResults"></div>
+      <div id="refInfo"></div>
+      <p class="small muted" style="margin-bottom:0">Стартовые диапазоны для закрытого грунта. Под конкретный сорт их стоит поправить по опыту.</p>
+    </div>
     <div class="row" style="align-items:flex-end">
       <button type="button" class="pico" id="pIconBtn" title="Выбрать иконку" style="border:1px dashed var(--green);cursor:pointer"></button>
       <div style="flex:1;min-width:200px"><label class="f" for="pName">Название</label><input type="text" id="pName" maxlength="40"></div>
@@ -654,6 +763,25 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
   <div class="dlg"><img id="photoFull" class="photo-full" alt=""><div class="dlg-foot"><button type="button" class="btn ghost" id="photoClose">Закрыть</button></div></div>
 </dialog>
 
+<dialog id="chartDlg" class="wide" style="max-width:1200px">
+  <div class="dlg">
+    <div class="between" style="margin-bottom:10px"><h2 id="bigTitle" style="margin:0"></h2><button type="button" class="btn ghost sm" id="bigClose">Закрыть</button></div>
+    <div class="chart-big"><canvas id="chBig"></canvas></div>
+    <p class="small muted">Колесо мыши или два пальца — масштаб, перетаскивание — сдвиг.</p>
+  </div>
+</dialog>
+
+<dialog id="libDlg" class="wide">
+  <div class="dlg">
+    <h2>Библиотека пресетов</h2>
+    <p class="small muted" style="margin-top:0">Готовые пресеты по справочнику растений. Добавленные появятся в общем списке с пометкой «из библиотеки».</p>
+    <input type="text" id="libSearch" placeholder="Поиск: огурец, мята, лимон, вёшенка…">
+    <div class="cats" id="libCats"></div>
+    <div class="lib-list" id="libList"></div>
+    <div class="dlg-foot"><button type="button" class="btn ghost" id="libClose">Закрыть</button></div>
+  </div>
+</dialog>
+
 <div id="toast"></div>
 
 <script>
@@ -733,6 +861,97 @@ const ICON_LIB = [
   ["🧪","Прочее","эксперимент опыт"],["🧫","Прочее","проращивание агар"],["🐝","Прочее","пчела опыление"],["🪱","Прочее","червь биогумус"],["💧","Прочее","вода гидропоника"],["☀️","Прочее","солнце свет"]
 ];
 const ICON_CATS = ["Все", ...new Set(ICON_LIB.map(i => i[1]))];
+
+/* ===================== СПРАВОЧНИК РАСТЕНИЙ =====================
+   Стартовые агрономические диапазоны для закрытого грунта.
+   [id, название, иконка, категория, T мин, T макс, влажн. мин, влажн. макс, часы света, яркость %,
+    время полива, мл, раз в N дней, дни прорастания, T прорастания мин, T прорастания макс, прорастание в темноте (1/0),
+    CO₂ макс, заметка, синонимы для поиска] */
+const PLANTS_RAW = [
+  ["arugula","Руккола","🥬","Зелень",15,22,50,70,14,80,["08:00"],60,1,4,18,22,0,1000,"Быстро стрелкуется при жаре выше 24 °C и длинном дне","рукола эрука индау"],
+  ["spinach","Шпинат","🥬","Зелень",12,20,50,70,12,80,["08:00"],70,1,7,15,20,0,1000,"Любит прохладу и короткий день, в жару уходит в стрелку",""],
+  ["parsley","Петрушка","🌿","Зелень",16,24,50,70,14,90,["09:00"],80,1,21,20,25,0,1000,"Всходит долго, семена замачивать на сутки",""],
+  ["dill","Укроп","🌿","Зелень",16,22,50,65,15,90,["09:00"],70,1,10,18,22,0,1000,"Светолюбив, при недостатке света вытягивается",""],
+  ["cilantro","Кинза","🌿","Зелень",17,24,50,65,12,80,["09:00"],70,1,10,18,22,0,1000,"На длинном дне быстро стрелкуется","кориандр"],
+  ["mint","Мята","🌿","Зелень",18,24,55,75,14,90,["09:00"],100,1,14,20,24,0,1000,"Любит влагу, растёт быстро","мелисса перечная"],
+  ["lemon_balm","Мелисса","🌿","Зелень",18,24,50,65,14,90,["09:00"],90,1,14,20,24,0,1000,"Семена мелкие, не заделывать глубоко",""],
+  ["green_onion","Лук на перо","🧅","Зелень",18,24,60,75,12,80,["09:00"],80,2,5,18,22,0,1000,"Луковицы ставить до половины в субстрат","лук зелёный перо"],
+  ["chives","Шнитт-лук","🌿","Зелень",16,22,50,65,14,90,["09:00"],80,1,14,18,22,0,1000,"Многолетник, после срезки отрастает","резанец"],
+  ["rosemary","Розмарин","🌿","Зелень",18,26,40,55,14,100,["10:00"],100,3,21,20,25,0,1200,"Не переносит переувлажнения корней",""],
+  ["thyme","Тимьян","🌿","Зелень",18,25,40,55,14,100,["10:00"],80,3,14,20,24,0,1200,"Сухолюбив, поливать после просыхания верхнего слоя","чабрец"],
+  ["oregano","Орегано","🌿","Зелень",18,25,40,55,14,100,["10:00"],80,2,10,20,24,0,1200,"Семена на свету, не заделывать","душица"],
+  ["watercress","Кресс-салат","🌱","Зелень",15,20,60,75,12,70,["08:00","20:00"],40,1,3,15,20,0,1000,"Урожай через 10–14 дней после посева","кресс"],
+  ["mizuna","Мизуна","🥬","Зелень",15,22,50,70,14,80,["08:00"],60,1,5,18,22,0,1000,"Японская листовая капуста, режут несколько раз","японская капуста"],
+  ["pak_choi","Пак-чой","🥬","Зелень",15,22,55,70,14,90,["08:00"],100,1,5,18,22,0,1000,"Стрелкуется при жаре и длинном дне","бок-чой капуста"],
+  ["chard","Мангольд","🥬","Зелень",15,24,50,70,14,90,["09:00"],120,1,7,18,24,0,1000,"Листовая свёкла, неприхотлива","свекла листовая"],
+  ["kale","Кале","🥦","Зелень",15,22,50,70,14,90,["09:00"],120,1,6,18,24,0,1000,"Холодостойкая капуста, вкуснее при прохладе","капуста кейл грюнколь"],
+  ["mg_sunflower","Подсолнечник (микрозелень)","🌻","Микрозелень",20,24,50,70,16,80,["08:00","20:00"],50,1,3,20,24,1,1000,"Первые 3 дня под грузом в темноте, срез на 8–10 день","подсолнух микрозелень"],
+  ["mg_pea","Горох (побеги)","🫛","Микрозелень",18,22,50,70,16,80,["08:00","20:00"],50,1,3,20,24,1,1000,"Замочка 8–12 часов, срез на 10–14 день","горох микрозелень побеги"],
+  ["mg_radish","Редис (микрозелень)","🌱","Микрозелень",18,22,50,65,16,80,["08:00","20:00"],40,1,3,20,24,1,1000,"Срез на 7–10 день, корневые волоски не путать с плесенью","редис микрозелень"],
+  ["mg_broccoli","Брокколи (микрозелень)","🥦","Микрозелень",18,22,50,65,16,80,["08:00","20:00"],40,1,3,20,24,1,1000,"Срез на 8–12 день","брокколи микрозелень"],
+  ["wheatgrass","Пшеница на ростки","🌾","Микрозелень",18,24,50,65,12,70,["08:00","20:00"],40,1,2,20,24,1,1000,"Витграсс, срез на 8–10 день","пшеница витграсс ростки"],
+  ["cucumber","Огурец","🥒","Овощи",22,28,65,80,14,100,["08:00","18:00"],200,1,5,25,28,0,1200,"Не выносит холода и сквозняков, нужна опора","огурцы"],
+  ["tomato_cherry","Томат черри","🍅","Овощи",20,26,55,70,16,100,["09:00"],200,1,6,24,28,0,1200,"Опыление встряхиванием цветков, нужна опора","помидор черри"],
+  ["eggplant","Баклажан","🍆","Овощи",22,28,60,70,14,100,["09:00"],180,1,10,25,30,0,1200,"Теплолюбив, плохо переносит пересадку",""],
+  ["sweet_pepper","Перец сладкий","🫑","Овощи",22,27,55,70,14,100,["09:00"],160,1,10,25,29,0,1200,"Не любит перепадов температуры","болгарский"],
+  ["hot_pepper","Перец острый","🌶️","Овощи",22,28,50,70,14,100,["09:00"],150,1,12,25,30,0,1200,"Прорастает медленно, нужен нагрев","чили халапеньо"],
+  ["radish","Редис","🌱","Овощи",14,20,60,70,12,90,["09:00"],80,1,4,18,22,0,1000,"Короткий день, иначе уходит в ботву и стрелку",""],
+  ["carrot_mini","Морковь мини","🥕","Овощи",16,22,55,70,14,90,["09:00"],100,1,14,18,22,0,1000,"Нужна глубина субстрата от 15 см","морковь"],
+  ["beans","Фасоль","🫘","Овощи",20,26,55,70,14,100,["09:00"],150,1,7,22,26,0,1200,"Кустовые сорта удобнее для бокса","бобы"],
+  ["peas","Горох","🫛","Овощи",15,22,55,70,14,90,["09:00"],120,1,7,18,22,0,1000,"Нужна опора, любит прохладу",""],
+  ["ginger","Имбирь","🫚","Овощи",22,28,70,85,12,70,["09:00"],150,2,21,25,28,1,1200,"Клубень проращивать в тепле и темноте","корень"],
+  ["strawberry_rem","Земляника ремонтантная","🍓","Ягоды",18,24,60,75,16,100,["08:00"],120,1,21,20,24,0,1200,"Опылять цветки кисточкой","клубника"],
+  ["blueberry","Голубика","🫐","Ягоды",16,24,60,75,14,100,["09:00"],150,2,30,20,24,0,1200,"Нужен кислый субстрат pH 4–5","черника"],
+  ["lemon","Лимон","🍋","Фрукты",18,25,50,70,12,100,["10:00"],250,3,21,24,28,0,1200,"Зимой лучше прохлада 12–15 °C","цитрус"],
+  ["mandarin","Мандарин","🍊","Фрукты",18,25,50,70,12,100,["10:00"],250,3,21,24,28,0,1200,"Не любит пересыхания и сквозняков","цитрус апельсин"],
+  ["pineapple","Ананас","🍍","Фрукты",22,30,60,80,12,100,["10:00"],150,3,30,25,30,0,1200,"Выращивают из верхушки плода",""],
+  ["avocado","Авокадо","🥑","Фрукты",20,28,60,80,12,90,["10:00"],200,2,30,22,26,0,1200,"Косточку проращивают наполовину в воде",""],
+  ["banana","Банан карликовый","🍌","Фрукты",24,30,65,85,12,100,["09:00"],300,1,30,26,30,0,1200,"Нужны тепло, влажность и много воды","банан"],
+  ["fig","Инжир","🌳","Фрукты",20,28,50,65,14,100,["10:00"],200,2,21,22,26,0,1200,"Зимой период покоя","смоковница"],
+  ["coffee","Кофейное дерево","🌳","Деревья",20,26,60,80,12,70,["10:00"],150,3,45,25,30,0,1200,"Рассеянный свет, не пересушивать","кофе"],
+  ["date_palm","Финиковая пальма","🌴","Деревья",22,30,50,70,12,100,["10:00"],150,3,60,30,35,0,1200,"Косточка прорастает 1–3 месяца в тепле","пальма финик"],
+  ["ficus","Фикус","🌳","Деревья",20,26,50,70,12,80,["10:00"],150,4,21,22,26,0,1200,"Не любит перестановок и холода","бонсай"],
+  ["violet","Фиалка (сенполия)","🪻","Цветы",20,24,50,65,12,50,["10:00"],60,4,21,22,25,0,1200,"Не мочить листья, рассеянный свет","сенполия узамбарская"],
+  ["lavender","Лаванда","🪻","Цветы",18,25,40,55,16,100,["10:00"],80,4,21,18,22,0,1200,"Семенам нужна холодная стратификация",""],
+  ["petunia","Петуния","🌺","Цветы",20,24,55,70,16,100,["09:00"],100,1,10,22,25,0,1200,"Семена сеют на свету, не заделывая",""],
+  ["marigold","Бархатцы","🌼","Цветы",18,26,45,65,14,100,["09:00"],100,1,7,20,24,0,1200,"Неприхотливы, отпугивают вредителей","тагетес"],
+  ["geranium","Пеларгония","🌺","Цветы",18,24,40,60,14,100,["10:00"],100,3,14,21,24,0,1200,"Не любит переувлажнения","герань"],
+  ["mini_rose","Роза миниатюрная","🌹","Цветы",18,24,50,65,14,100,["09:00"],150,2,21,20,24,0,1200,"Обычно из черенков, нужна вентиляция от болезней","роза"],
+  ["tulip","Тюльпан (выгонка)","🌷","Цветы",14,18,60,75,14,80,["10:00"],80,2,21,8,10,1,1000,"Луковицы после охлаждения 12–16 недель",""],
+  ["flytrap","Венерина мухоловка","🪴","Хищные",20,30,60,80,14,100,["10:00"],80,1,30,22,26,0,1200,"Поливать только дистиллированной водой, зимой покой","дионея"],
+  ["sundew","Росянка","🪴","Хищные",20,28,60,85,14,90,["10:00"],60,1,30,22,26,0,1200,"Дистиллированная вода, высокая влажность","дрозера"],
+  ["oyster","Вёшенка","🍄","Грибы",16,22,85,95,10,30,["08:00","20:00"],50,1,14,22,26,1,800,"Инкубация в темноте, плодоношение при 85–95% и частом проветривании","грибы"],
+  ["shiitake","Шиитаке","🍄","Грибы",14,20,80,90,10,30,["08:00","20:00"],50,1,60,22,25,1,800,"Долгая инкубация блоков, для плодоношения нужен холодовой шок","грибы"],
+  ["aloe","Алоэ","🪴","Суккуленты",20,30,30,50,12,100,["10:00"],100,10,21,22,25,0,1500,"Поливать только после полного просыхания","столетник"],
+  ["echeveria","Эхеверия","🌵","Суккуленты",18,28,30,50,14,100,["10:00"],80,10,21,22,25,0,1500,"Не допускать воды в розетке","каменная роза"],
+  ["lithops","Литопс","🌵","Суккуленты",20,28,20,40,12,100,["10:00"],50,14,21,22,25,0,1500,"Живые камни, полив только в период роста",""]
+];
+
+function lightWindow(hours){
+  const start = Math.max(0, Math.round(14 * 60 - hours * 30)), end = Math.min(1439, start + hours * 60);
+  const p2 = n => String(n).padStart(2, "0"), f = m => p2(Math.floor(m / 60)) + ":" + p2(m % 60);
+  return [f(start), f(end)];
+}
+const PLANTS = PLANTS_RAW.map(r => ({id:r[0], name:r[1], icon:r[2], cat:r[3], t:[r[4], r[5]], h:[r[6], r[7]], light:r[8], bright:r[9],
+  times:r[10], ml:r[11], every:r[12], germ:{days:r[13], t:[r[14], r[15]], dark:!!r[16]}, co2:r[17], note:r[18], alias:(r[1] + " " + r[19] + " " + r[3]).toLowerCase()}));
+function plantToStages(p){
+  const [ls, le] = lightWindow(p.light);
+  const stages = [];
+  if(p.germ.days){
+    stages.push(st(p.germ.dark ? "Прорастание в темноте" : "Прорастание", p.germ.days,
+      [p.germ.t[0], p.germ.t[1], Math.max(p.h[0], 70), Math.min(95, Math.max(p.h[1], 85)), p.co2],
+      [true, p.times, 1, Math.max(20, Math.round(p.ml * 0.5))], [!p.germ.dark, ls, le, p.germ.dark ? 0 : Math.round(p.bright * 0.7)]));
+  }
+  stages.push(st("Рост", 365, [p.t[0], p.t[1], p.h[0], p.h[1], p.co2], [true, p.times, p.every, p.ml], [p.light > 0, ls, le, p.bright]));
+  return stages;
+}
+function plantToPreset(p){
+  const fanEvery = p.cat === "Грибы" ? 30 : 60;
+  return {id:"lib_" + p.id, name:p.name, icon:p.icon, desc:p.note, source:"library", plantId:p.id, stages:plantToStages(p),
+    modules:mods(p.h[0] >= 55, p.t[0] >= 20, true, fanEvery, 5, 60)};
+}
+const LIBRARY_PRESETS = PLANTS.map(plantToPreset);
+
 
 const MOD_TYPES = {
   humidifier:{icon:"💧", label:"Увлажнение", color:"var(--water-l)"},
@@ -927,7 +1146,18 @@ function buildDemoData(){
               st("Вегетация", 60, [21,27,45,60,1200], [true,["09:00"],1,120], [true,"07:00","21:00",100])],
       modules:mods(true, true, true, 45, 5, 60), updated:now}
   };
-  return {devices:{[DEVICE_ID]:{settings, telemetry, history, historyHourly:hourly, events, modules, presets, grows, reminders}}};
+  const experiments = {
+    "-Dexp1":{name:"Микрозелень при 26 °C", hypothesis:"При 26 °C расход воды вырастет примерно на треть, листья не потеряют тургор",
+      startTs:now - 9 * D, endTs:now - 8 * D, status:"done", presetName:"Микрозелень",
+      params:{climate:{tempMin:24, tempMax:27, humMin:50, humMax:70, co2Max:1000}, watering:{enabled:true, times:["08:00","20:00"], everyDays:1, volumeMl:60}, uv:{enabled:true, start:"06:00", end:"22:00", brightness:80}},
+      results:{before:{t:21.0, h:60.2, co2:640, vpd:0.99, rate:4.1, water:100}, during:{t:25.8, h:54.6, co2:655, vpd:1.52, rate:5.6, water:120, inNormPct:78}},
+      notes:{"-Dx1":{ts:now - 8.6 * D, text:"К вечеру края листьев горошка чуть подсохли"}},
+      conclusion:"Расход воды вырос на 37%, при 26 °C нужно поднимать влажность или объём полива"}
+  };
+  const presetPrefs = {added:{lib_cucumber:now, lib_mint:now}, hidden:{}};
+  settings.device = {waterThreshold:2000};
+  telemetry.scaleFactor = -318.0; telemetry.waterThreshold = 2000;
+  return {devices:{[DEVICE_ID]:{settings, telemetry, history, historyHourly:hourly, events, modules, presets, grows, reminders, experiments, presetPrefs}}};
 }
 
 /* ===================== FIREBASE ===================== */
@@ -942,13 +1172,13 @@ if(DEMO){
 const base = db.ref("devices/" + DEVICE_ID);
 if(typeof Chart !== "undefined"){
   if(window.ChartZoom) Chart.register(window.ChartZoom);
-  Chart.defaults.font.family = "Nunito, system-ui, sans-serif";
+  Chart.defaults.font.family = "IBM Plex Sans, system-ui, sans-serif";
   Chart.defaults.color = "#687e6e";
 }
 
 const S = { telemetry:null, settings:{}, modules:{}, presets:{}, events:[], grows:{}, reminders:{},
   history24:[], growPts:[], growEvents:[], serverOffset:0, chartHours:24, chartGrow:"", chartData:[], chartRange:null,
-  logFilter:"all", modFilter:"all" };
+  logFilter:"all", modFilter:"all", experiments:{}, presetPrefs:{}, chartCustom:null, presetFilter:"all" };
 const listeners = [];
 
 /* ===================== УТИЛИТЫ ===================== */
@@ -1077,11 +1307,14 @@ function normPreset(p){
   q.modules = q.modules || mods(true, true, true);
   return q;
 }
-function allPresets(){
-  const custom = Object.entries(S.presets || {}).map(([id, p]) => normPreset({...p, id, custom:true}));
-  return [...BUILTIN_PRESETS.map(normPreset), ...custom];
+function allPresets(includeHidden){
+  const hidden = S.presetPrefs.hidden || {}, added = S.presetPrefs.added || {};
+  const custom = Object.entries(S.presets || {}).map(([id, p]) => normPreset({...p, id, custom:true, source:"custom"}));
+  const lib = LIBRARY_PRESETS.filter(p => added[p.id]).map(p => normPreset({...p}));
+  const list = [...BUILTIN_PRESETS.map(p => normPreset({...p, source:"builtin"})), ...lib, ...custom];
+  return includeHidden ? list : list.filter(p => !hidden[p.id]);
 }
-const findPreset = id => allPresets().find(p => p.id === id);
+const findPreset = id => allPresets(true).find(p => p.id === id) || LIBRARY_PRESETS.map(normPreset).find(p => p.id === id);
 function stageIndexForDay(stages, day){
   let acc = 0;
   for(let i = 0; i < stages.length; i++){
@@ -1100,9 +1333,9 @@ function effective(ts = nowMs()){
   const s = S.settings || {}, g = activeGrow();
   if(g && Array.isArray(g.stages) && g.stages.length){
     const day = growDay(g.startTs, ts), i = stageIndexForDay(g.stages, day), stg = g.stages[i];
-    return {grow:g, day, stageIdx:i, stage:stg, climate:stg.climate || {}, watering:stg.watering || {}, uv:{...(stg.uv || {}), mode:s.uv?.mode || "auto"}};
+    return applyOverrides({grow:g, day, stageIdx:i, stage:stg, climate:stg.climate || {}, watering:stg.watering || {}, uv:{...(stg.uv || {}), mode:s.uv?.mode || "auto"}}, ts);
   }
-  return {grow:null, day:0, stageIdx:-1, stage:null, climate:s.climate || {}, watering:s.watering || {}, uv:{enabled:true, ...(s.uv || {})}};
+  return applyOverrides({grow:null, day:0, stageIdx:-1, stage:null, climate:s.climate || {}, watering:s.watering || {}, uv:{enabled:true, ...(s.uv || {})}}, ts);
 }
 function targetsAt(g, ts){
   if(g && g.stages && g.stages.length){ const i = stageIndexForDay(g.stages, growDay(g.startTs, ts)); return g.stages[i].climate || {}; }
@@ -1148,6 +1381,8 @@ function startApp(){
   on(base.child("presets"), "value", s => { S.presets = s.val() || {}; renderPresets(); });
   on(base.child("grows"), "value", s => { S.grows = s.val() || {}; renderAll(); fillGrowSelects(); });
   on(base.child("reminders"), "value", s => { S.reminders = s.val() || {}; renderHero(); });
+  on(base.child("experiments"), "value", s => { S.experiments = s.val() || {}; if(S.tab === "research") renderResearch(); });
+  on(base.child("presetPrefs"), "value", s => { S.presetPrefs = s.val() || {}; renderPresets(); if(!$("libDlg").hidden && $("libDlg").open) renderLibrary(); });
   on(base.child("events").limitToLast(200), "value", s => {
     const arr = []; s.forEach(c => { arr.push({key:c.key, ...c.val()}); });
     S.events = arr.reverse(); renderLog(); renderWeight();
@@ -1156,11 +1391,22 @@ function startApp(){
   refreshGrowData();
   setInterval(loadHistory24, 5 * 60 * 1000);
   setInterval(refreshGrowData, 5 * 60 * 1000);
-  setInterval(() => { renderOverview(); renderModulesLive(); }, 5000);
+  setInterval(() => {
+    renderOverview(); renderModulesLive(); checkOverridesExpired();
+    if(S.tab === "research") renderResearch();
+    if(S.tab === "adapt" && rampState()) renderAdapt();
+    if(S.tab === "diag") renderDiag();
+    if(S.tab === "calc") updateWaterCalc();
+  }, 5000);
+  initChartCards();
   if(!DEMO) setTimeout(() => compactHistory(false).catch(console.error), 15000);
   initFolds();
 }
-function renderAll(){ renderOverview(); fillControlForm(); renderPresets(); renderModules(); renderLog(); }
+function renderAll(){
+  renderOverview(); fillControlForm(); renderPresets(); renderModules(); renderLog();
+  if(S.tab === "research") renderResearch();
+  if(S.tab === "adapt"){ $("adaptBody").dataset.rendered = ""; renderAdapt(); }
+}
 
 /* ===================== ДАННЫЕ ИСТОРИИ ===================== */
 async function loadRange(from, to){
@@ -1251,12 +1497,20 @@ async function compactHistory(manual){
 
 /* ===================== ВКЛАДКИ ===================== */
 function showTab(name){
+  S.tab = name;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.id === "tab-" + name));
   if(name === "charts") loadCharts();
+  if(name === "research"){ $("researchBody").dataset.rendered = ""; renderResearch(); }
+  if(name === "adapt"){ $("adaptBody").dataset.rendered = ""; renderAdapt(); }
+  if(name === "calc"){ $("calcBody").dataset.rendered = ""; renderCalc(); }
+  if(name === "diag"){ $("diagBody").dataset.rendered = ""; renderDiag(); }
   window.scrollTo({top:0, behavior:"smooth"});
 }
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$("btnAppMenu").onclick = e => { e.stopPropagation(); toggleMenu(e.currentTarget, $("appMenu")); };
+document.querySelectorAll("#appMenu [data-view]").forEach(el => el.onclick = () => { $("appMenu").hidden = true; showTab(el.dataset.view); });
+document.querySelectorAll("[data-back]").forEach(b => b.onclick = () => showTab("overview"));
 function initFolds(){
   ["foldWeight", "foldVpd"].forEach(id => {
     const el = $(id);
@@ -1300,6 +1554,9 @@ function renderAlarms(){
     else if(m.state?.overheat) alarms.push(["bad", `Модуль «${name}»: аварийное отключение по перегреву`]);
   });
   Object.values(S.reminders || {}).forEach(r => { if(r.at <= nowMs()) alarms.push(["info", "Напоминание: " + esc(r.text)]); });
+  const es = expState(), rs = rampState();
+  if(es && es.running) alarms.push(["info", `Идёт исследование «${esc(S.experiments[es.x.id]?.name || "")}»: действуют параметры опыта ещё ${fmtDur(es.x.endTs - nowMs())}`]);
+  if(rs && rs.running) alarms.push(["info", `Идёт адаптация к «${esc(rs.r.label || "")}»: ${Math.round(rs.k * 100)}%, осталось ${fmtDur(rs.r.endTs - nowMs())}`]);
   $("alarms").innerHTML = alarms.map(([cls, txt]) => `<div class="alarm ${cls}">${txt}</div>`).join("");
 }
 
@@ -1589,7 +1846,7 @@ const markerPlugin = {
         ctx.strokeStyle = m.color; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); ctx.setLineDash([]);
         if(px - lastLabelX > 95 && px + 40 < a.right){
-          ctx.fillStyle = m.color; ctx.font = "700 11px Nunito, sans-serif";
+          ctx.fillStyle = m.color; ctx.font = "600 11px IBM Plex Sans, sans-serif";
           let label = m.label || "";
           while(label.length > 3 && ctx.measureText(label).width > 88) label = label.slice(0, -2) + "…";
           ctx.fillText(label, px + 4, a.top + 12);
@@ -1651,7 +1908,8 @@ function fillGrowSelects(){
 }
 async function loadCharts(){
   let from, to = nowMs();
-  if(S.chartGrow && S.grows[S.chartGrow]){
+  if(S.chartCustom){ [from, to] = S.chartCustom; }
+  else if(S.chartGrow && S.grows[S.chartGrow]){
     const g = S.grows[S.chartGrow]; from = g.startTs; to = g.endTs || nowMs();
   } else if(S.chartHours){ from = to - S.chartHours * 3600000; }
   else { from = 0; }
@@ -1677,34 +1935,38 @@ async function loadCharts(){
     });
   });
   chartMarkers.sort((a, b) => a.ts - b.ts);
-  const pts = k => data.filter(p => p[k] !== undefined && p[k] !== null).map(p => ({x:p.ts, y:p[k]}));
-  const grid = {color:"#eef3ef"};
-  lineChart("chClimate", from, to, [
-    {label:"Температура, °C", data:pts("t"), borderColor:"#f06a3c", yAxisID:"y"},
-    {label:"Влажность, %", data:pts("h"), borderColor:"#1e9bd7", yAxisID:"y1"}
-  ], {y:{grid, position:"left", title:{display:true, text:"°C"}}, y1:{grid:{display:false}, position:"right", title:{display:true, text:"%"}}});
-  lineChart("chVpd", from, to, [
-    {label:"VPD, кПа", data:data.filter(p => p.t !== undefined).map(p => ({x:p.ts, y:+vpd(p.t, p.h).toFixed(2)})),
-      borderColor:"#43a047", backgroundColor:"rgba(76,175,80,.12)", fill:true}
-  ], {y:{grid, suggestedMin:0, title:{display:true, text:"кПа"}}});
-  lineChart("chAir", from, to, [
-    {label:"CO₂, ppm", data:pts("co2"), borderColor:"#43a047", yAxisID:"y"},
-    {label:"TVOC, ppb", data:pts("tvoc"), borderColor:"#7e57c2", yAxisID:"y1"}
-  ], {y:{grid, position:"left", title:{display:true, text:"ppm"}}, y1:{grid:{display:false}, position:"right", title:{display:true, text:"ppb"}}});
-  lineChart("chWeight", from, to, [
-    {label:"Вес, г", data:pts("w"), borderColor:"#9c4fb8", backgroundColor:"rgba(156,79,184,.08)", fill:true}
-  ], {y:{grid, title:{display:true, text:"г"}}});
+  ["chClimate","chVpd","chAir","chWeight"].forEach(id => { const sp = CHART_SPECS[id](data); lineChart(id, from, to, sp.datasets, sp.axes); });
   $("chartInfo").textContent = data.length ? `Показано: ${fmtDateTime(from)} — ${fmtDateTime(to)} · точек: ${data.length}` : "За выбранный период данных нет";
 }
+const cpts = (data, k) => data.filter(p => p[k] !== undefined && p[k] !== null).map(p => ({x:p.ts, y:p[k]}));
+const CGRID = {color:"#eef1ee"};
+const CHART_SPECS = {
+  chClimate:data => ({datasets:[
+    {label:"Температура, °C", data:cpts(data, "t"), borderColor:"#d9642f", yAxisID:"y"},
+    {label:"Влажность, %", data:cpts(data, "h"), borderColor:"#2f86b8", yAxisID:"y1"}],
+    axes:{y:{grid:CGRID, position:"left", title:{display:true, text:"°C"}}, y1:{grid:{display:false}, position:"right", title:{display:true, text:"%"}}}}),
+  chVpd:data => ({datasets:[
+    {label:"VPD, кПа", data:data.filter(p => p.t !== undefined).map(p => ({x:p.ts, y:+vpd(p.t, p.h).toFixed(2)})), borderColor:"#3f7d4b", backgroundColor:"rgba(63,125,75,.10)", fill:true}],
+    axes:{y:{grid:CGRID, suggestedMin:0, title:{display:true, text:"кПа"}}}}),
+  chAir:data => ({datasets:[
+    {label:"CO₂, ppm", data:cpts(data, "co2"), borderColor:"#3f7d4b", yAxisID:"y"},
+    {label:"TVOC, ppb", data:cpts(data, "tvoc"), borderColor:"#6a58a6", yAxisID:"y1"}],
+    axes:{y:{grid:CGRID, position:"left", title:{display:true, text:"ppm"}}, y1:{grid:{display:false}, position:"right", title:{display:true, text:"ppb"}}}}),
+  chWeight:data => ({datasets:[
+    {label:"Вес, г", data:cpts(data, "w"), borderColor:"#8a5aa8", backgroundColor:"rgba(138,90,168,.07)", fill:true}],
+    axes:{y:{grid:CGRID, title:{display:true, text:"г"}}}})
+};
 document.querySelectorAll("#rangeSeg button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.toggle("on", x === b));
-  S.chartHours = +b.dataset.h; S.chartGrow = ""; $("chartGrow").value = ""; loadCharts();
+  S.chartHours = +b.dataset.h; S.chartGrow = ""; S.chartCustom = null; $("chartGrow").value = ""; loadCharts();
 });
 $("chartGrow").onchange = () => {
-  S.chartGrow = $("chartGrow").value;
+  S.chartGrow = $("chartGrow").value; S.chartCustom = null;
   document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.toggle("on", !S.chartGrow && +x.dataset.h === S.chartHours));
   loadCharts();
 };
+$("bigClose").onclick = () => $("chartDlg").close();
+$("chartDlg").addEventListener("close", () => { if(charts.chBig){ charts.chBig.destroy(); delete charts.chBig; } });
 $("btnResetZoom").onclick = () => {
   Object.values(charts).forEach(c => { if(c.resetZoom) c.resetZoom("none"); });
   if(S.chartRange) $("chartInfo").textContent = `Показано: ${fmtDateTime(S.chartRange[0])} — ${fmtDateTime(S.chartRange[1])}`;
@@ -1879,14 +2141,29 @@ function presetModulesText(p){
   const m = p.modules || {}, used = Object.entries(MOD_TYPES).filter(([k]) => m[k] && m[k].use).map(([, v]) => v.label.toLowerCase());
   return used.length ? used.join(", ") : "без модулей";
 }
+const SRC_LABEL = {builtin:"встроенный", library:"из библиотеки", custom:"мой"};
+function renderPresetMenu(){
+  const all = allPresets(true), hidden = S.presetPrefs.hidden || {};
+  const cnt = f => all.filter(p => f === "hidden" ? hidden[p.id] : !hidden[p.id] && (f === "all" || p.source === f)).length;
+  const items = [["all","Все"],["builtin","Встроенные"],["library","Из библиотеки"],["custom","Мои"],["hidden","Скрытые"]];
+  $("presetMenu").innerHTML = `<h4>Показать</h4>` + items.map(([v, l]) => `<div class="mi ${S.presetFilter === v ? "cur" : ""}" data-pf="${v}"><div style="flex:1">${l}</div><span class="small muted">${cnt(v)}</span></div>`).join("") +
+    `<div class="sep" style="margin:8px 0"></div><div class="mi" id="miLib"><div><b>Библиотека пресетов</b><div class="small muted">${PLANTS.length} растений: добавить в список</div></div></div>`;
+  $("presetMenu").querySelectorAll("[data-pf]").forEach(el => el.onclick = e => { e.stopPropagation(); S.presetFilter = el.dataset.pf; renderPresets(); renderPresetMenu(); });
+  $("miLib").onclick = () => { $("presetMenu").hidden = true; $("libSearch").value = ""; libCat = "Все"; renderLibrary(); $("libDlg").showModal(); };
+}
+$("btnPresetMenu").onclick = e => { e.stopPropagation(); renderPresetMenu(); toggleMenu(e.currentTarget, $("presetMenu")); };
+$("libSearch").oninput = renderLibrary;
+$("libClose").onclick = () => $("libDlg").close();
 function renderPresets(){
-  const active = S.settings?.presetId;
-  $("presetGrid").innerHTML = allPresets().map(p => {
+  const active = S.settings?.presetId, hidden = S.presetPrefs.hidden || {}, f = S.presetFilter;
+  const list = allPresets(true).filter(p => f === "hidden" ? hidden[p.id] : !hidden[p.id] && (f === "all" || p.source === f));
+  $("presetFilterPill").textContent = {all:"Показаны все", builtin:"Только встроенные", library:"Только из библиотеки", custom:"Только мои", hidden:"Скрытые пресеты"}[f] + ` · ${list.length}`;
+  $("presetGrid").innerHTML = list.map(p => {
     const mainSt = p.stages[p.stages.length - 1], c = mainSt.climate, w = mainSt.watering, u = mainSt.uv;
+    const isHidden = !!hidden[p.id];
     return `<div class="card preset ${p.id === active ? "active" : ""}">
       <div class="ptitle">${iconHtml(p.icon, p.iconImg, "sm")}
-        <div style="flex:1;min-width:0">${esc(p.name)}<div class="small muted" style="font-weight:600">${esc(p.desc || "")}</div></div>
-        ${p.custom ? `<span class="tag">свой</span>` : ""}</div>
+        <div style="flex:1;min-width:0">${esc(p.name)} <span class="tag ${p.source}">${SRC_LABEL[p.source]}</span><div class="small muted" style="font-weight:400;margin-top:2px">${esc(p.desc || "")}</div></div></div>
       <div class="mini">${p.stages.length > 1 ? "Этапы: " + p.stages.map((s, i) => esc(s.name) + (i < p.stages.length - 1 ? ` (${s.days} дн)` : "")).join(" → ") : "Один этап"}</div>
       <div class="params">
         <div><span class="l">Температура</span>${c.tempMin}–${c.tempMax} °C</div><div><span class="l">Влажность</span>${c.humMin}–${c.humMax} %</div>
@@ -1895,26 +2172,43 @@ function renderPresets(){
       </div>
       <div class="mini">Модули: ${presetModulesText(p)}</div>
       <div class="pactions">
-        ${p.id === active ? `<span class="pill">Активен</span>` : `<button class="btn sm" data-apply="${esc(p.id)}">Применить</button>`}
+        ${isHidden ? `<button class="btn sm" data-unhide="${esc(p.id)}">Вернуть в список</button>`
+          : p.id === active ? `<span class="pill">Активен</span>` : `<button class="btn sm" data-apply="${esc(p.id)}">Применить</button>`}
         ${p.custom ? `<button class="btn ghost sm" data-edit="${esc(p.id)}">Изменить</button><button class="btn danger sm" data-del="${esc(p.id)}">Удалить</button>`
-                   : `<button class="btn ghost sm" data-copy="${esc(p.id)}">Копировать и изменить</button>`}
+                   : `<button class="btn ghost sm" data-copy="${esc(p.id)}">Копировать</button>`}
+        ${!p.custom && !isHidden ? (p.source === "library" ? `<button class="btn ghost sm" data-unlib="${esc(p.id)}">Убрать</button>` : `<button class="btn ghost sm" data-hide="${esc(p.id)}">Скрыть</button>`) : ""}
       </div></div>`;
-  }).join("");
+  }).join("") || `<div class="card empty">${f === "hidden" ? "Скрытых пресетов нет" : "Здесь пока пусто. Добавьте пресеты из библиотеки через •••."}</div>`;
   const grid = $("presetGrid");
   grid.querySelectorAll("[data-apply]").forEach(b => b.onclick = () => applyPreset(findPreset(b.dataset.apply)));
   grid.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openPresetDlg(findPreset(b.dataset.edit), b.dataset.edit));
   grid.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const p = findPreset(b.dataset.copy); openPresetDlg({...p, name:p.name + " (мой)"}, null); });
   grid.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+    if(b.dataset.del === active) return toast("Активный пресет нельзя удалить — сначала примените другой");
     if(!(await ask("Удалить этот пресет?", "Удалить"))) return;
     await base.child("presets/" + b.dataset.del).remove(); toast("Пресет удалён");
+  });
+  grid.querySelectorAll("[data-hide]").forEach(b => b.onclick = async () => {
+    if(b.dataset.hide === active) return toast("Активный пресет нельзя скрыть");
+    await base.child("presetPrefs/hidden/" + b.dataset.hide).set(true); toast("Пресет скрыт. Вернуть можно в ••• → Скрытые");
+  });
+  grid.querySelectorAll("[data-unhide]").forEach(b => b.onclick = async () => { await base.child("presetPrefs/hidden/" + b.dataset.unhide).remove(); toast("Пресет возвращён"); });
+  grid.querySelectorAll("[data-unlib]").forEach(b => b.onclick = async () => {
+    if(b.dataset.unlib === active) return toast("Активный пресет нельзя убрать");
+    await base.child("presetPrefs/added/" + b.dataset.unlib).remove(); toast("Пресет убран из списка, он остаётся в библиотеке");
   });
 }
 async function applyPreset(p){
   if(!p) return;
   const g = activeGrow();
   const msg = g ? `Сменить пресет на «${p.name}» во время выращивания? Этапы нового пресета продолжатся с дня ${growDay(g.startTs)}, смена запишется в журнал.`
-                : `Применить пресет «${p.name}»? Цели климата, полив и свет будут заменены.`;
+                : `Применить пресет «${p.name}»? Цели климата, полив и свет будут заменены. Для плавного перехода используйте ••• → Адаптация.`;
   if(!(await ask(msg, "Применить"))) return;
+  await applyPresetDirect(p);
+  toast(`Пресет «${p.name}» применён`);
+}
+async function applyPresetDirect(p){
+  const g = activeGrow();
   const mainSt = p.stages[p.stages.length - 1];
   const patch = {presetId:p.id, presetName:p.name, presetIcon:p.icon || "🌱", presetIconImg:p.iconImg || null, presetLatin:translit(p.name) || "Preset",
     climate:{...mainSt.climate}, "watering/times":mainSt.watering.times, "watering/everyDays":mainSt.watering.everyDays,
@@ -1928,7 +2222,6 @@ async function applyPreset(p){
   }
   await saveSettings(patch);
   setDirty(false);
-  toast(`Пресет «${p.name}» применён`);
 }
 
 // ---- редактор пресета ----
@@ -2006,9 +2299,14 @@ function openPresetDlg(p, id){
   $("pFanEvery").value = m.fan?.everyMin ?? 60; $("pFanFor").value = m.fan?.forMin ?? 5; $("pFanSpeed").value = m.fan?.speed ?? 70;
   $("pFanFields").hidden = !$("pModFan").checked;
   $("pErr").textContent = "";
+  $("refPanel").hidden = true;
   $("presetDlg").showModal();
 }
 $("pModFan").onchange = () => $("pFanFields").hidden = !$("pModFan").checked;
+$("btnRefMenu").onclick = e => { e.stopPropagation(); toggleMenu(e.currentTarget, $("refMenu")); };
+$("miRef").onclick = () => { $("refMenu").hidden = true; $("refPanel").hidden = false; refSelected = null; $("refSearch").value = ""; renderRef(); $("refSearch").focus(); };
+$("refClose").onclick = () => $("refPanel").hidden = true;
+$("refSearch").oninput = () => { const m = libraryMatches($("refSearch").value); refSelected = m.length === 1 ? m[0].id : refSelected; renderRef(); };
 $("btnPresetNew").onclick = () => openPresetDlg(null, null);
 $("btnPresetFromCurrent").onclick = () => {
   const s = S.settings, p = findPreset(s.presetId), e = effective();
@@ -2230,7 +2528,7 @@ document.querySelectorAll("#logSeg button").forEach(b => b.onclick = () => {
 function renderLog(){
   const f = S.logFilter;
   const list = S.events.filter(e => f === "all" ? true : f === "alarm" ? (e.level === "alarm" || e.level === "warn")
-    : f === "grow" ? ["grow", "stage", "reminder"].includes(e.type) : e.type === f);
+    : f === "grow" ? ["grow", "stage", "reminder", "research", "adapt"].includes(e.type) : e.type === f);
   const src = e => e.source && e.source !== "box" && e.source !== "page" ? (S.modules[e.source]?.settings?.name || e.source) : e.source === "page" ? "Страница" : "Бокс";
   $("logList").innerHTML = list.length ? list.map(e => `<div class="ev lv-${esc(e.level)} t-${esc(e.type)}"><div class="bar"></div>
       <div style="flex:1;min-width:0"><div>${esc(e.msg)}</div><div class="t">${e.ts ? fmtDateTime(e.ts) : ""} · ${esc(src(e))}</div></div></div>`).join("")
@@ -2296,6 +2594,594 @@ function openGrowDlg(id){
   $("growDlg").showModal();
 }
 
+
+/* ===================== ИССЛЕДОВАНИЯ И АДАПТАЦИЯ: РАСЧЁТЫ ===================== */
+const lerp = (a, b, k) => a + (b - a) * k;
+function lerpParamsJS(from, to, k){
+  const out = JSON.parse(JSON.stringify(to));
+  const fc = from.climate || {}, tc = to.climate || {};
+  ["tempMin","tempMax","humMin","humMax","co2Max"].forEach(key => {
+    if(fc[key] !== undefined && tc[key] !== undefined) out.climate[key] = +lerp(+fc[key], +tc[key], k).toFixed(key === "co2Max" ? 0 : 1);
+  });
+  if(from.watering?.volumeMl && to.watering?.volumeMl) out.watering.volumeMl = Math.round(lerp(from.watering.volumeMl, to.watering.volumeMl, k));
+  const fu = from.uv || {}, tu = to.uv || {};
+  const toHM = m => pad(Math.floor(m / 60)) + ":" + pad(Math.round(m) % 60);
+  if(fu.enabled !== false && tu.enabled !== false){
+    out.uv.start = toHM(lerp(toMin(fu.start), toMin(tu.start), k));
+    out.uv.end = toHM(lerp(toMin(fu.end), toMin(tu.end), k));
+    out.uv.brightness = Math.round(lerp(+fu.brightness || 0, +tu.brightness || 0, k));
+  } else if(fu.enabled === false && tu.enabled !== false){
+    out.uv.brightness = Math.round(lerp(0, +tu.brightness || 0, k));
+  } else if(fu.enabled !== false && tu.enabled === false){
+    // из света в темноту: свет постепенно гаснет в прежнем окне
+    out.uv = {...out.uv, enabled:k < 1, start:fu.start, end:fu.end, brightness:Math.round(lerp(+fu.brightness || 0, 0, k))};
+  }
+  return out;
+}
+function rampState(ts = nowMs()){
+  const r = S.settings.ramp;
+  if(!r || !r.active || !(r.endTs > r.startTs)) return null;
+  const k = (ts - r.startTs) / (r.endTs - r.startTs);
+  return {r, k:Math.max(0, Math.min(1, k)), running:ts >= r.startTs && ts < r.endTs};
+}
+function expState(ts = nowMs()){
+  const x = S.settings.experiment;
+  if(!x || !x.active) return null;
+  return {x, running:ts >= x.startTs && ts < x.endTs, k:Math.max(0, Math.min(1, (ts - x.startTs) / (x.endTs - x.startTs)))};
+}
+// порядок как в прошивке: этап/базовые -> адаптация -> исследование
+function applyOverrides(res, ts){
+  const rs = rampState(ts);
+  if(rs && rs.running){
+    const m = lerpParamsJS(rs.r.from, {climate:res.climate, watering:res.watering, uv:res.uv}, rs.k);
+    res = {...res, climate:m.climate, watering:m.watering, uv:m.uv, ramp:rs};
+  }
+  const es = expState(ts);
+  if(es && es.running) res = {...res, climate:es.x.climate, watering:es.x.watering, uv:{...es.x.uv, mode:res.uv.mode}, experiment:es};
+  return res;
+}
+function dropRate(pts){                       // скорость потери веса между поливами, г/ч
+  let drop = 0, first = null, last = null;
+  for(let i = 1; i < pts.length; i++){
+    const a = pts[i - 1], b = pts[i];
+    if(a.w === undefined || b.w === undefined) continue;
+    const d = b.w - a.w;
+    if(d < 0 && d > -30) drop += -d;
+    if(first === null) first = a.ts;
+    last = b.ts;
+  }
+  return first !== null && last > first ? drop / ((last - first) / 3600000) : null;
+}
+function periodStats(pts, evs){
+  const avg = k => { const a = pts.filter(p => p[k] !== undefined && p[k] !== null); return a.length ? a.reduce((s, p) => s + +p[k], 0) / a.length : null; };
+  const vp = pts.filter(p => p.t !== undefined).map(p => vpd(p.t, p.h));
+  return {t:avg("t"), h:avg("h"), co2:avg("co2"), vpd:vp.length ? vp.reduce((a, b) => a + b, 0) / vp.length : null,
+    rate:dropRate(pts), water:evs.filter(e => e.type === "watering").reduce((s, e) => s + (+e.ml || 0), 0)};
+}
+async function computeExperimentResults(x){
+  const len = x.endTs - x.startTs;
+  const before = await loadRange(x.startTs - len, x.startTs), during = await loadRange(x.startTs, x.endTs);
+  const evB = await loadEvents(x.startTs - len, x.startTs), evD = await loadEvents(x.startTs, x.endTs);
+  const c = x.params?.climate || {};
+  let ok = 0, tot = 0;
+  during.forEach(p => { const r = inNorm(p, c); if(r !== null){ tot++; if(r) ok++; } });
+  return {before:periodStats(before, evB), during:{...periodStats(during, evD), inNormPct:tot ? Math.round(ok / tot * 100) : null}};
+}
+
+/* ===================== ИССЛЕДОВАНИЯ: ИНТЕРФЕЙС ===================== */
+const isTypingIn = box => { const a = document.activeElement; return !!(a && box.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)); };
+function paramsFormHtml(prefix, p){
+  const c = p.climate || {}, w = p.watering || {}, u = p.uv || {};
+  return `<div class="subhead">Климат</div>
+    <div class="fields">
+      <div><label class="f" for="${prefix}TMin">Темп. мин, °C</label><input type="number" step="0.5" id="${prefix}TMin" value="${c.tempMin ?? 20}"></div>
+      <div><label class="f" for="${prefix}TMax">Темп. макс, °C</label><input type="number" step="0.5" id="${prefix}TMax" value="${c.tempMax ?? 26}"></div>
+      <div><label class="f" for="${prefix}HMin">Влажн. мин, %</label><input type="number" id="${prefix}HMin" value="${c.humMin ?? 50}"></div>
+      <div><label class="f" for="${prefix}HMax">Влажн. макс, %</label><input type="number" id="${prefix}HMax" value="${c.humMax ?? 70}"></div>
+      <div><label class="f" for="${prefix}Co2">CO₂ макс, ppm</label><input type="number" step="50" id="${prefix}Co2" value="${c.co2Max ?? 1200}"></div>
+    </div>
+    <div class="subhead">Свет</div>
+    <label class="switch"><input type="checkbox" id="${prefix}UvOn" ${u.enabled !== false ? "checked" : ""}> Свет включён</label>
+    <div class="fields" style="margin-top:10px">
+      <div><label class="f" for="${prefix}UvStart">Включение</label><input type="time" id="${prefix}UvStart" value="${esc(u.start || "08:00")}"></div>
+      <div><label class="f" for="${prefix}UvEnd">Выключение</label><input type="time" id="${prefix}UvEnd" value="${esc(u.end || "20:00")}"></div>
+      <div><label class="f" for="${prefix}UvBr">Яркость, %</label><input type="number" min="0" max="100" id="${prefix}UvBr" value="${u.brightness ?? 100}"></div>
+    </div>
+    <div class="subhead">Полив</div>
+    <label class="switch"><input type="checkbox" id="${prefix}WOn" ${w.enabled !== false ? "checked" : ""}> Полив по расписанию</label>
+    <div class="fields" style="margin-top:10px">
+      <div style="grid-column:span 2"><label class="f" for="${prefix}WTimes">Время через запятую</label><input type="text" id="${prefix}WTimes" value="${esc((w.times || []).join(", "))}"></div>
+      <div><label class="f" for="${prefix}WMl">Объём, мл</label><input type="number" min="1" max="2000" id="${prefix}WMl" value="${w.volumeMl ?? 100}"></div>
+    </div>`;
+}
+function readParamsForm(prefix, base){
+  const v = id => $(prefix + id).value;
+  const climate = {tempMin:+v("TMin"), tempMax:+v("TMax"), humMin:+v("HMin"), humMax:+v("HMax"), co2Max:+v("Co2")};
+  const times = v("WTimes").split(/[,;\s]+/).filter(Boolean).map(normTime);
+  return {climate,
+    watering:{enabled:$(prefix + "WOn").checked, times:times.filter(Boolean).sort(), everyDays:base?.watering?.everyDays || 1, volumeMl:Math.round(+v("WMl"))},
+    uv:{enabled:$(prefix + "UvOn").checked, start:v("UvStart"), end:v("UvEnd"), brightness:Math.min(100, Math.max(0, Math.round(+v("UvBr"))))},
+    bad:climate.tempMin >= climate.tempMax || climate.humMin >= climate.humMax ? "Минимум должен быть меньше максимума"
+      : times.some(t => !t) ? "Время полива в формате ЧЧ:ММ через запятую" : null};
+}
+const durMs = (val, unit) => Math.max(1, +val || 1) * (unit === "d" ? 86400000 : 3600000);
+function fmtDur(ms){
+  const h = Math.round(ms / 3600000);
+  return h >= 48 ? Math.round(h / 24) + " дн" : h + " ч";
+}
+function renderResearch(){
+  const box = $("researchBody"); if(!box) return;
+  const e = effective(), es = expState();
+  const list = Object.entries(S.experiments || {}).map(([id, x]) => ({id, ...x})).sort((a, b) => b.startTs - a.startTs);
+  let html = "";
+  if(es){
+    const x = S.experiments[es.x.id] || {};
+    const left = Math.max(0, es.x.endTs - nowMs());
+    const notes = Object.values(x.notes || {}).sort((a, b) => b.ts - a.ts);
+    const pc = x.params || {}, c = pc.climate || {}, u = pc.uv || {}, w = pc.watering || {};
+    html += `<div class="card" style="margin-bottom:14px">
+      <div class="between"><div><div class="small muted">Идёт исследование</div><h3 style="margin:2px 0 0">${esc(x.name || "Исследование")}</h3></div>
+        <button class="btn danger sm" id="expStop">Остановить</button></div>
+      ${x.hypothesis ? `<p class="muted" style="margin:10px 0 0">${esc(x.hypothesis)}</p>` : ""}
+      <div class="progress"><div style="width:${(es.k * 100).toFixed(1)}%"></div></div>
+      <div class="between small muted"><span>${fmtDateTime(es.x.startTs)}</span><span>${es.running ? "осталось " + fmtDur(left) : "завершено"}</span><span>${fmtDateTime(es.x.endTs)}</span></div>
+      <div class="params" style="margin-top:12px">
+        <div><span class="l">Температура</span>${c.tempMin}–${c.tempMax} °C</div><div><span class="l">Влажность</span>${c.humMin}–${c.humMax} %</div>
+        <div><span class="l">Свет</span>${u.enabled === false ? "выключен" : u.start + "–" + u.end + ", " + u.brightness + "%"}</div><div><span class="l">Полив</span>${w.enabled === false ? "выключен" : (w.times || []).join(", ") + " · " + w.volumeMl + " мл"}</div>
+      </div>
+      <div class="subhead">Наблюдения</div>
+      <div class="row"><input type="text" id="expNoteText" placeholder="Что видно: листья, тургор, цвет, рост…" style="flex:1;min-width:200px"><button class="btn sm" id="expNoteAdd">Добавить</button></div>
+      <div class="notes-list" style="margin-top:10px">${notes.map(n => `<div class="note"><div class="body"><div class="meta">${fmtDateTime(n.ts)}</div><div>${esc(n.text)}</div></div></div>`).join("") || `<div class="hint">Пока нет наблюдений</div>`}</div>
+    </div>`;
+  }
+  html += `<div class="card" id="expFormCard" ${es ? "hidden" : ""}>
+    <h3>Новое исследование</h3>
+    <p class="small muted" style="margin-top:0">Бокс держит параметры опыта заданное время, затем сам возвращается к пресету. После окончания страница сравнит период опыта с таким же периодом до него.</p>
+    <div class="fields" style="grid-template-columns:2fr 1fr 1fr">
+      <div><label class="f" for="expName">Название</label><input type="text" id="expName" maxlength="60" placeholder="например: базилик при 28 °C"></div>
+      <div><label class="f" for="expDur">Длительность</label><input type="number" id="expDur" min="1" value="24"></div>
+      <div><label class="f" for="expUnit">Единицы</label><select id="expUnit"><option value="h">часы</option><option value="d">дни</option></select></div>
+    </div>
+    <div style="height:10px"></div>
+    <label class="f" for="expHyp">Гипотеза</label>
+    <textarea id="expHyp" maxlength="500" placeholder="Что ожидаете увидеть. Например: при 28 °C расход воды вырастет, а листья не потеряют тургор"></textarea>
+    ${paramsFormHtml("exp", e)}
+    <div id="expErr" class="small" style="color:var(--danger);min-height:18px;margin-top:8px"></div>
+    <button class="btn" id="expStart">Начать исследование</button>
+  </div>`;
+  const done = list.filter(x => x.status !== "active");
+  html += `<div class="section-title"><h3>Завершённые исследования</h3></div>`;
+  html += done.length ? done.map(x => {
+    const r = x.results, b = r?.before || {}, d = r?.during || {};
+    const row = (label, k, dgt, unit) => {
+      const bv = b[k], dv = d[k], diff = bv !== null && bv !== undefined && dv !== null && dv !== undefined ? dv - bv : null;
+      return `<tr><td>${label}</td><td>${num(bv, dgt)}${unit}</td><td>${num(dv, dgt)}${unit}</td><td>${diff === null ? "—" : (diff >= 0 ? "+" : "") + num(diff, dgt) + unit}</td></tr>`;
+    };
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="between"><div><h3 style="margin:0">${esc(x.name || "Исследование")}</h3>
+        <div class="small muted">${fmtDateTime(x.startTs)} — ${fmtDateTime(x.endTs)} · ${fmtDur(x.endTs - x.startTs)}${x.status === "stopped" ? " · остановлено досрочно" : ""}</div></div>
+        <button class="btn light sm" data-exp-chart="${esc(x.id)}">На графиках</button></div>
+      ${x.hypothesis ? `<p class="muted small">${esc(x.hypothesis)}</p>` : ""}
+      ${r ? `<div class="table-wrap"><table class="cmp" style="min-width:420px"><thead><tr><th>Показатель</th><th>До опыта</th><th>Во время</th><th>Разница</th></tr></thead><tbody>
+        ${row("Средняя температура", "t", 1, " °C")}${row("Средняя влажность", "h", 0, " %")}${row("Средний VPD", "vpd", 2, " кПа")}
+        ${row("Средний CO₂", "co2", 0, " ppm")}${row("Расход воды растением", "rate", 1, " г/ч")}${row("Полив", "water", 0, " мл")}
+        </tbody></table></div><p class="small muted">Время в целевом диапазоне опыта: ${d.inNormPct ?? "—"}%</p>`
+        : `<button class="btn light sm" data-exp-calc="${esc(x.id)}">Посчитать результаты</button>`}
+      ${Object.values(x.notes || {}).length ? `<div class="subhead">Наблюдения</div>${Object.values(x.notes).sort((a, b) => a.ts - b.ts).map(n => `<div class="small">${fmtDateTime(n.ts)} — ${esc(n.text)}</div>`).join("")}` : ""}
+      <div class="subhead">Вывод</div>
+      <div class="row"><input type="text" data-concl="${esc(x.id)}" value="${esc(x.conclusion || "")}" placeholder="Что показал опыт" style="flex:1;min-width:200px"><button class="btn ghost sm" data-concl-save="${esc(x.id)}">Сохранить</button></div>
+    </div>`;
+  }).join("") : `<div class="card empty">Завершённых исследований пока нет</div>`;
+  if(isTypingIn(box) && box.dataset.rendered) return;   // не мешаем вводу
+  box.innerHTML = html;
+  box.dataset.rendered = "1";
+  if($("expStart")) $("expStart").onclick = startExperiment;
+  if($("expStop")) $("expStop").onclick = stopExperiment;
+  if($("expNoteAdd")) $("expNoteAdd").onclick = async () => {
+    const t = $("expNoteText").value.trim(); if(!t) return;
+    await base.child(`experiments/${es.x.id}/notes`).push({ts:nowMs(), text:t}); toast("Наблюдение сохранено");
+  };
+  box.querySelectorAll("[data-exp-calc]").forEach(b => b.onclick = async () => {
+    const x = S.experiments[b.dataset.expCalc]; b.disabled = true;
+    await base.child("experiments/" + b.dataset.expCalc + "/results").set(await computeExperimentResults(x));
+  });
+  box.querySelectorAll("[data-concl-save]").forEach(b => b.onclick = async () => {
+    const v = box.querySelector(`[data-concl="${b.dataset.conclSave}"]`).value.trim();
+    await base.child("experiments/" + b.dataset.conclSave + "/conclusion").set(v); toast("Вывод сохранён");
+  });
+  box.querySelectorAll("[data-exp-chart]").forEach(b => b.onclick = () => {
+    const x = S.experiments[b.dataset.expChart], len = x.endTs - x.startTs;
+    S.chartCustom = [x.startTs - len, x.endTs]; S.chartGrow = "";
+    showTab("charts");
+  });
+}
+async function startExperiment(){
+  const p = readParamsForm("exp", effective());
+  if(p.bad) return $("expErr").textContent = p.bad;
+  const name = $("expName").value.trim() || "Исследование";
+  const len = durMs($("expDur").value, $("expUnit").value);
+  if(!(await ask(`Начать «${name}» на ${fmtDur(len)}? Бокс будет держать параметры опыта, затем вернётся к пресету.`, "Начать"))) return;
+  const start = nowMs(), ref = base.child("experiments").push();
+  const params = {climate:p.climate, watering:p.watering, uv:p.uv};
+  await ref.set({name, hypothesis:$("expHyp").value.trim(), startTs:start, endTs:start + len, params, status:"active",
+    presetName:S.settings.presetName || "", growId:activeGrow()?.id || null});
+  await saveSettings({experiment:{active:true, id:ref.key, startTs:start, endTs:start + len, ...params}});
+  await logEvent("info", "research", `Начато исследование «${name}» на ${fmtDur(len)}`);
+  toast("Исследование запущено");
+}
+async function stopExperiment(){
+  const es = expState(); if(!es) return;
+  if(!(await ask("Остановить исследование досрочно? Бокс сразу вернётся к параметрам пресета.", "Остановить"))) return;
+  await finishExperiment(es.x.id, nowMs(), "stopped");
+}
+async function finishExperiment(id, endTs, status){
+  const x = S.experiments[id];
+  await saveSettings({experiment:{active:false}});
+  if(x){
+    const fin = {...x, endTs};
+    await base.child("experiments/" + id).update({status, endTs, results:await computeExperimentResults(fin)});
+    await logEvent("info", "research", `Исследование «${x.name}» ${status === "stopped" ? "остановлено" : "завершено"}, результаты в разделе «Исследования»`);
+  }
+}
+// когда время опыта или адаптации вышло, страница закрывает их (бокс уже вернулся сам)
+let closingOverrides = false;
+async function checkOverridesExpired(){
+  if(closingOverrides) return;
+  closingOverrides = true;
+  try{
+    const es = expState();
+    if(es && nowMs() >= es.x.endTs) await finishExperiment(es.x.id, es.x.endTs, "done");
+    const rs = rampState();
+    if(rs && nowMs() >= rs.r.endTs) await saveSettings({ramp:{active:false}});
+  } finally { closingOverrides = false; }
+}
+
+/* ===================== АДАПТАЦИЯ: ИНТЕРФЕЙС ===================== */
+function renderAdapt(){
+  const box = $("adaptBody"); if(!box) return;
+  const rs = rampState();
+  if(isTypingIn(box) && box.dataset.rendered && !rs) return;
+  const e = effective();
+  let html = "";
+  if(rs){
+    const r = rs.r, target = effectiveNoOverrides();
+    const cur = lerpParamsJS(r.from, target, rs.k);
+    const row = (label, f, t, c, u) => `<tr><td>${label}</td><td>${f}${u}</td><td><b>${c}${u}</b></td><td>${t}${u}</td></tr>`;
+    html += `<div class="card" style="margin-bottom:14px">
+      <div class="between"><div><div class="small muted">Идёт адаптация</div><h3 style="margin:2px 0 0">${esc(r.label || "Плавный переход")}</h3></div>
+      <button class="btn danger sm" id="rampStop">Завершить сейчас</button></div>
+      <div class="progress"><div style="width:${(rs.k * 100).toFixed(1)}%"></div></div>
+      <div class="between small muted"><span>${fmtDateTime(r.startTs)}</span><span>${Math.round(rs.k * 100)}% · осталось ${fmtDur(Math.max(0, r.endTs - nowMs()))}</span><span>${fmtDateTime(r.endTs)}</span></div>
+      <div class="table-wrap" style="margin-top:12px"><table class="cmp" style="min-width:460px"><thead><tr><th>Параметр</th><th>Было</th><th>Сейчас</th><th>Цель</th></tr></thead><tbody>
+        ${row("Темп. мин", r.from.climate.tempMin, target.climate.tempMin, cur.climate.tempMin, " °C")}
+        ${row("Темп. макс", r.from.climate.tempMax, target.climate.tempMax, cur.climate.tempMax, " °C")}
+        ${row("Влажн. мин", r.from.climate.humMin, target.climate.humMin, cur.climate.humMin, " %")}
+        ${row("Влажн. макс", r.from.climate.humMax, target.climate.humMax, cur.climate.humMax, " %")}
+        ${row("Свет", r.from.uv.enabled === false ? "выкл" : r.from.uv.start + "–" + r.from.uv.end, target.uv.enabled === false ? "выкл" : target.uv.start + "–" + target.uv.end, cur.uv.enabled === false ? "выкл" : cur.uv.start + "–" + cur.uv.end, "")}
+        ${row("Яркость", r.from.uv.enabled === false ? 0 : r.from.uv.brightness, target.uv.brightness, cur.uv.brightness, " %")}
+        ${row("Объём полива", r.from.watering?.volumeMl ?? "—", target.watering.volumeMl, cur.watering.volumeMl, " мл")}
+      </tbody></table></div>
+      <p class="small muted">Бокс пересчитывает цели каждую минуту, модули в режиме «Авто» идут за ними.</p>
+    </div>`;
+  }
+  const presetOpts = allPresets().map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+  html += `<div class="card" ${rs ? "hidden" : ""}>
+    <h3>Новая адаптация</h3>
+    <p class="small muted" style="margin-top:0">Плавный переход от текущих условий к новым: температура, влажность, длина и яркость света меняются постепенно. Полезно при пересадке, смене пресета, переходе растения из рассады во взрослую фазу или из магазина в бокс.</p>
+    <div class="fields" style="grid-template-columns:2fr 1fr 1fr">
+      <div><label class="f" for="rampTarget">Перейти к</label><select id="rampTarget"><option value="custom">Своим значениям</option>${presetOpts}</select></div>
+      <div><label class="f" for="rampDur">Длительность</label><input type="number" id="rampDur" min="1" value="3"></div>
+      <div><label class="f" for="rampUnit">Единицы</label><select id="rampUnit"><option value="d">дни</option><option value="h">часы</option></select></div>
+    </div>
+    <div id="rampCustom">${paramsFormHtml("ramp", e)}</div>
+    <div class="subhead">Как будет меняться</div>
+    <div class="table-wrap" id="rampPreview"></div>
+    <div id="rampErr" class="small" style="color:var(--danger);min-height:18px;margin-top:8px"></div>
+    <button class="btn" id="rampStart">Начать адаптацию</button>
+  </div>`;
+  box.innerHTML = html;
+  box.dataset.rendered = "1";
+  if($("rampStop")) $("rampStop").onclick = async () => {
+    if(!(await ask("Завершить адаптацию сейчас? Сразу начнут действовать целевые параметры.", "Завершить"))) return;
+    await saveSettings({ramp:{active:false}}); await logEvent("info", "adapt", "Адаптация завершена досрочно");
+  };
+  if(!rs){
+    const upd = () => { $("rampCustom").hidden = $("rampTarget").value !== "custom"; renderRampPreview(); };
+    $("rampTarget").onchange = upd;
+    box.querySelectorAll("#rampCustom input, #rampDur, #rampUnit").forEach(i => i.oninput = renderRampPreview);
+    $("rampStart").onclick = startRamp;
+    upd();
+  }
+}
+function effectiveNoOverrides(){ const s = S.settings; const saved = [s.ramp, s.experiment]; s.ramp = null; s.experiment = null; const e = effective(); s.ramp = saved[0]; s.experiment = saved[1]; return e; }
+function rampTargetParams(){
+  const id = $("rampTarget").value;
+  if(id === "custom"){ const p = readParamsForm("ramp", effective()); return {params:p, label:"Свои значения", bad:p.bad}; }
+  const p = findPreset(id), g = activeGrow();
+  const stg = g ? p.stages[stageIndexForDay(p.stages, growDay(g.startTs))] : p.stages[p.stages.length - 1];
+  return {params:{climate:stg.climate, watering:stg.watering, uv:stg.uv}, label:"Пресет «" + p.name + "»", preset:p};
+}
+function renderRampPreview(){
+  const from = effective(), t = rampTargetParams();
+  if(t.bad){ $("rampPreview").innerHTML = `<div class="small muted">${t.bad}</div>`; return; }
+  const len = durMs($("rampDur").value, $("rampUnit").value), ks = [0, .25, .5, .75, 1];
+  const rows = ks.map(k => { const p = lerpParamsJS(from, t.params, k); const c = p.climate;
+    return `<tr><td>${k === 0 ? "Сейчас" : k === 1 ? "Финиш" : "+" + fmtDur(len * k)}</td><td>${c.tempMin}–${c.tempMax} °C</td><td>${c.humMin}–${c.humMax} %</td>
+      <td>${p.uv.enabled === false ? "выкл" : p.uv.start + "–" + p.uv.end + ", " + p.uv.brightness + "%"}</td><td>${p.watering.volumeMl} мл</td></tr>`; }).join("");
+  $("rampPreview").innerHTML = `<table class="cmp" style="min-width:520px"><thead><tr><th>Момент</th><th>Температура</th><th>Влажность</th><th>Свет</th><th>Полив</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+async function startRamp(){
+  const t = rampTargetParams();
+  if(t.bad) return $("rampErr").textContent = t.bad;
+  const from = effective(), len = durMs($("rampDur").value, $("rampUnit").value), start = nowMs();
+  if(!(await ask(`Начать плавный переход к «${t.label}» за ${fmtDur(len)}?`, "Начать"))) return;
+  const fromObj = {climate:{...from.climate}, watering:{volumeMl:from.watering.volumeMl || 100}, uv:{enabled:from.uv.enabled !== false, start:from.uv.start, end:from.uv.end, brightness:from.uv.brightness ?? 100}};
+  if(t.preset) await applyPresetDirect(t.preset);
+  else await writeCurrentParams(t.params);
+  await saveSettings({ramp:{active:true, startTs:start, endTs:start + len, from:fromObj, label:t.label}});
+  await logEvent("info", "adapt", `Начата адаптация к «${t.label}» за ${fmtDur(len)}`);
+  toast("Адаптация запущена");
+}
+// записать климат/полив/свет в текущий этап или в базовые настройки
+async function writeCurrentParams(p){
+  const e = effectiveNoOverrides(), patch = {};
+  if(e.grow){
+    const i = e.stageIdx;
+    patch[`grow/stages/${i}/climate`] = p.climate; patch[`grow/stages/${i}/watering`] = p.watering; patch[`grow/stages/${i}/uv`] = p.uv;
+    await base.child(`grows/${e.grow.id}/stages/${i}`).update({climate:p.climate, watering:p.watering, uv:p.uv});
+  } else {
+    patch.climate = p.climate;
+    Object.entries(p.watering).forEach(([k, v]) => patch["watering/" + k] = v);
+    ["start", "end", "brightness"].forEach(k => patch["uv/" + k] = p.uv[k]);
+  }
+  await saveSettings(patch);
+}
+
+/* ===================== КАЛЬКУЛЯТОРЫ ===================== */
+const svp = t => 0.6108 * Math.exp(17.27 * t / (t + 237.3));
+function renderCalc(){
+  const box = $("calcBody"); if(!box || box.dataset.rendered) return updateWaterCalc();
+  const t = S.telemetry || {}, e = effective();
+  const hours = e.uv.enabled === false ? 0 : ((toMin(e.uv.end) - toMin(e.uv.start) + 1440) % 1440) / 60;
+  box.innerHTML = `<div class="grid two">
+    <div class="card"><h3>Влажность для нужного VPD</h3>
+      <div class="fields">
+        <div><label class="f" for="cvT">Температура воздуха, °C</label><input type="number" step="0.1" id="cvT" value="${t.t ?? 22}"></div>
+        <div><label class="f" for="cvV">Целевой VPD, кПа</label><input type="number" step="0.05" id="cvV" value="1.0"></div>
+        <div><label class="f" for="cvL">Лист холоднее воздуха на, °C</label><input type="number" step="0.5" id="cvL" value="0"></div>
+      </div>
+      <div class="result" id="cvOut"></div>
+      <p class="small muted">Ориентиры VPD: рассада и черенки 0,4–0,8; вегетация 0,8–1,2; цветение 1,2–1,6 кПа. Под светодиодами лист обычно на 1–2 °C холоднее воздуха.</p>
+    </div>
+    <div class="card"><h3>Дневная сумма света (DLI)</h3>
+      <div class="fields">
+        <div><label class="f" for="cdP">PPFD лампы на 100%, мкмоль/м²·с</label><input type="number" id="cdP" value="300"></div>
+        <div><label class="f" for="cdB">Яркость, %</label><input type="number" id="cdB" value="${e.uv.brightness ?? 100}"></div>
+        <div><label class="f" for="cdH">Часов света</label><input type="number" step="0.5" id="cdH" value="${hours}"></div>
+      </div>
+      <div class="result" id="cdOut"></div>
+      <p class="small muted">PPFD лампы на уровне листьев можно измерить люксметром (для белых светодиодов примерно люксы ÷ 70) или взять из паспорта лампы.</p>
+    </div>
+    <div class="card"><h3>Разведение удобрения</h3>
+      <div class="fields">
+        <div><label class="f" for="cfD">Доза на литр</label><input type="number" step="0.1" id="cfD" value="2"></div>
+        <div><label class="f" for="cfU">Единицы</label><select id="cfU"><option value="мл">мл/л</option><option value="г">г/л</option></select></div>
+        <div><label class="f" for="cfV">Объём воды, л</label><input type="number" step="0.1" id="cfV" value="5"></div>
+        <div><label class="f" for="cfK">Доля от нормы, %</label><input type="number" id="cfK" value="50"></div>
+      </div>
+      <div class="result" id="cfOut"></div>
+      <p class="small muted">Для рассады и микрозелени обычно берут 25–50% от нормы на упаковке.</p>
+    </div>
+    <div class="card"><h3>Сколько воды нужно растению</h3>
+      <div id="cwOut"></div>
+    </div>
+  </div>`;
+  box.dataset.rendered = "1";
+  const vpdCalc = () => {
+    const T = +$("cvT").value, V = +$("cvV").value, L = +$("cvL").value;
+    const rh = (svp(T - L) - V) / svp(T) * 100;
+    $("cvOut").innerHTML = rh > 0 && rh < 100 ? `Нужна влажность <b>${num(rh, 0)} %</b>` : `При такой температуре этот VPD недостижим`;
+  };
+  const dliCalc = () => {
+    const d = +$("cdP").value * (+$("cdB").value / 100) * +$("cdH").value * 0.0036;
+    const hint = d < 6 ? "мало света: подходит теневыносливым" : d < 12 ? "микрозелень, зелень, рассада" : d < 17 ? "салаты, травы" : d < 30 ? "плодовые: томат, перец, огурец" : "очень много света";
+    $("cdOut").innerHTML = `DLI <b>${num(d, 1)} моль/м²·сутки</b> — ${hint}`;
+  };
+  const fertCalc = () => {
+    const a = +$("cfD").value * +$("cfV").value * (+$("cfK").value / 100);
+    $("cfOut").innerHTML = `Нужно <b>${num(a, 1)} ${$("cfU").value}</b> на ${num(+$("cfV").value, 1)} л воды`;
+  };
+  ["cvT","cvV","cvL"].forEach(id => $(id).oninput = vpdCalc);
+  ["cdP","cdB","cdH"].forEach(id => $(id).oninput = dliCalc);
+  ["cfD","cfU","cfV","cfK"].forEach(id => $(id).oninput = fertCalc);
+  vpdCalc(); dliCalc(); fertCalc(); updateWaterCalc();
+}
+function updateWaterCalc(){
+  const out = $("cwOut"); if(!out) return;
+  const rate = dropRate(S.history24 || []), e = effective();
+  const times = e.watering.enabled === false ? 0 : (e.watering.times || []).length;
+  if(rate === null){ out.innerHTML = `<p class="muted">Нужны данные весов хотя бы за несколько часов.</p>`; return; }
+  const day = rate * 24, per = times ? day / times / (e.watering.everyDays ? 1 / e.watering.everyDays : 1) : null;
+  out.innerHTML = `<div class="kv"><span>Расход по весам</span><b class="num">${num(rate, 1)} г/ч</b></div>
+    <div class="kv"><span>За сутки</span><b class="num">${num(day, 0)} мл</b></div>
+    <div class="kv"><span>Сейчас за раз</span><b class="num">${e.watering.volumeMl ?? "—"} мл × ${times}</b></div>
+    ${per ? `<div class="kv"><span>Рекомендуемо за раз</span><b class="num">${Math.round(per)} мл</b></div>
+    <div class="row" style="margin-top:10px"><button class="btn light sm" id="cwApply">Поставить ${Math.round(per)} мл</button></div>` : ""}
+    <p class="small muted">Расчёт по снижению веса за последние сутки. Часть воды уходит в дренаж, поэтому обычно добавляют 10–20%.</p>`;
+  if($("cwApply")) $("cwApply").onclick = async () => {
+    const eff = effectiveNoOverrides();
+    await writeCurrentParams({climate:eff.climate, watering:{...eff.watering, volumeMl:Math.round(per)}, uv:eff.uv});
+    toast(`Объём полива: ${Math.round(per)} мл`);
+  };
+}
+
+/* ===================== ДИАГНОСТИКА И КАЛИБРОВКА ===================== */
+let waterDry = null, waterWet = null;
+function renderDiag(){
+  const box = $("diagBody"); if(!box) return;
+  const t = S.telemetry || {}, online = isDeviceOnline(), sn = t.sensors || {};
+  const mods = Object.values(S.modules), modsOn = mods.filter(isModuleOnline).length;
+  const st = (ok, txt) => `<span class="pill ${ok === null ? "gray" : ok ? "" : "bad"}">${txt}</span>`;
+  const rows = [
+    ["Связь с боксом", st(online, online ? "онлайн" : "нет связи"), t.ts ? "данные " + ago(t.ts) : ""],
+    ["BME280 (температура, влажность)", st(online ? sn.bme !== false : null, sn.bme === false ? "ошибка" : "в порядке"), online && t.t !== undefined ? `${num(t.t, 1)} °C, ${num(t.h, 1)} %` : ""],
+    ["CCS811 (CO₂, TVOC)", st(online ? sn.ccs !== false : null, sn.ccs === false ? "ошибка" : t.co2Warm ? "прогрев" : "в порядке"), online && t.co2 !== undefined ? `${t.co2} ppm, ${t.tvoc} ppb` : ""],
+    ["HX711 (весы)", st(online ? sn.hx !== false : null, sn.hx === false ? "ошибка" : "в порядке"), online && t.weight !== undefined ? `${num(t.weight, 0)} г, коэффициент ${t.scaleFactor ?? "?"}` : ""],
+    ["Датчик воды", st(online ? !!t.water : null, t.water ? "вода есть" : "воды нет"), online ? `уровень ${t.waterLevel}, порог ${t.waterThreshold ?? "?"}` : ""],
+    ["Точное время", st(online ? t.timeValid !== false : null, t.timeValid === false ? "нет" : "получено"), ""],
+    ["Wi-Fi", st(online ? t.rssi > -80 : null, online ? t.rssi + " дБм" : "—"), online ? (t.rssi > -60 ? "отличный сигнал" : t.rssi > -75 ? "нормальный" : "слабый") : ""],
+    ["Модули", st(mods.length ? modsOn === mods.length : null, `${modsOn} из ${mods.length} на связи`), ""],
+    ["Прошивка", st(null, t.fw || "?"), t.ip ? "IP " + t.ip : ""]
+  ];
+  const live = `<div class="table-wrap"><table class="cmp" style="min-width:520px"><thead><tr><th>Узел</th><th>Состояние</th><th>Значение</th></tr></thead><tbody>
+    ${rows.map(r => `<tr style="cursor:default"><td>${r[0]}</td><td>${r[1]}</td><td class="muted">${r[2]}</td></tr>`).join("")}</tbody></table></div>`;
+  if(box.dataset.rendered){ $("diagLive").innerHTML = live; $("wLevelNow").textContent = online ? t.waterLevel : "—"; return; }
+  box.innerHTML = `<div class="card" style="margin-bottom:14px"><h3>Состояние</h3><div id="diagLive">${live}</div></div>
+    <div class="grid two">
+      <div class="card"><h3>Калибровка весов</h3>
+        <ol class="steps">
+          <li>Уберите всё с платформы и нажмите «Обнулить».<div style="margin-top:8px"><button class="btn light sm" id="dTare">Обнулить</button></div></li>
+          <li>Положите груз с известной массой (гиря, бутылка воды: 1 мл ≈ 1 г) и введите массу.
+            <div class="row" style="margin-top:8px"><input type="number" id="dGrams" placeholder="масса, г" style="width:140px"><button class="btn sm" id="dCal">Откалибровать</button></div></li>
+        </ol>
+        <p class="small muted">Коэффициент сохранится в памяти бокса. Результат появится в журнале.</p>
+      </div>
+      <div class="card"><h3>Порог датчика воды</h3>
+        <div class="kv"><span>Уровень сейчас</span><b class="num" id="wLevelNow">${online ? t.waterLevel : "—"}</b></div>
+        <div class="kv"><span>Порог сейчас</span><b class="num">${t.waterThreshold ?? S.settings.device?.waterThreshold ?? 2000}</b></div>
+        <div class="row" style="margin:10px 0">
+          <button class="btn light sm" id="wDry">Запомнить: воды нет</button>
+          <button class="btn light sm" id="wWet">Запомнить: вода есть</button>
+        </div>
+        <div class="row"><input type="number" id="wThr" placeholder="порог" style="width:140px" value="${S.settings.device?.waterThreshold ?? 2000}"><button class="btn sm" id="wSave">Сохранить порог</button></div>
+        <p class="small muted" id="wHint">Снимите показания без воды и с водой — порог посчитается посередине.</p>
+      </div>
+    </div>`;
+  box.dataset.rendered = "1";
+  $("dTare").onclick = async () => { await sendCommand("tare", true); toast("Весы будут обнулены"); };
+  $("dCal").onclick = async () => {
+    const g = +$("dGrams").value;
+    if(!(g > 1)) return toast("Введите массу груза в граммах");
+    await sendCommand("scaleCal", {grams:g, ts:Date.now()}); toast("Бокс откалибрует весы через несколько секунд");
+  };
+  const calcThr = () => {
+    if(waterDry !== null && waterWet !== null){
+      $("wThr").value = Math.round((waterDry + waterWet) / 2);
+      $("wHint").textContent = `Сухо: ${waterDry}, с водой: ${waterWet}. Порог ${$("wThr").value}.`;
+    }
+  };
+  $("wDry").onclick = () => { waterDry = S.telemetry?.waterLevel ?? null; toast("Запомнено: " + waterDry); calcThr(); };
+  $("wWet").onclick = () => { waterWet = S.telemetry?.waterLevel ?? null; toast("Запомнено: " + waterWet); calcThr(); };
+  $("wSave").onclick = async () => {
+    const v = Math.round(+$("wThr").value);
+    if(!(v >= 100 && v <= 4000)) return toast("Порог от 100 до 4000");
+    await saveSettings({"device/waterThreshold":v}); toast("Порог сохранён");
+  };
+}
+
+/* ===================== БИБЛИОТЕКА И СПРАВОЧНИК ===================== */
+function libraryMatches(q, cat){
+  q = q.trim().toLowerCase();
+  return PLANTS.filter(p => (!cat || cat === "Все" || p.cat === cat) && (!q || p.alias.includes(q)));
+}
+let libCat = "Все";
+function renderLibrary(){
+  const cats = ["Все", ...new Set(PLANTS.map(p => p.cat))];
+  $("libCats").innerHTML = cats.map(c => `<button type="button" class="${c === libCat ? "on" : ""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  $("libCats").querySelectorAll("button").forEach(b => b.onclick = () => { libCat = b.dataset.c; renderLibrary(); });
+  const added = S.presetPrefs.added || {};
+  const list = libraryMatches($("libSearch").value, libCat);
+  $("libList").innerHTML = list.map(p => `<div class="lib-row">
+      <div class="pico xs">${p.icon}</div>
+      <div style="flex:1;min-width:0"><b>${esc(p.name)}</b><div class="small muted">${p.t[0]}–${p.t[1]} °C · ${p.h[0]}–${p.h[1]} % · свет ${p.light} ч · ${esc(p.cat)}</div></div>
+      ${added["lib_" + p.id] ? `<span class="pill gray">в списке</span>` : `<button class="btn light sm" data-add="${p.id}">Добавить</button>`}
+    </div>`).join("") || `<div class="empty">Ничего не нашлось</div>`;
+  $("libList").querySelectorAll("[data-add]").forEach(b => b.onclick = async () => {
+    await base.child("presetPrefs/added/lib_" + b.dataset.add).set(Date.now());
+    toast("Пресет добавлен в список");
+  });
+}
+function plantInfoHtml(p){
+  const vmid = vpd((p.t[0] + p.t[1]) / 2, (p.h[0] + p.h[1]) / 2);
+  return `<div class="plant-info">
+    <div class="row" style="flex-wrap:nowrap"><div class="pico sm">${p.icon}</div><div><b>${esc(p.name)}</b><div class="small muted">${esc(p.cat)}</div></div></div>
+    <div class="params" style="margin-top:10px">
+      <div><span class="l">Температура</span>${p.t[0]}–${p.t[1]} °C</div><div><span class="l">Влажность</span>${p.h[0]}–${p.h[1]} %</div>
+      <div><span class="l">VPD в середине диапазона</span>${num(vmid, 2)} кПа</div><div><span class="l">Свет</span>${p.light} ч, ${p.bright}%</div>
+      <div><span class="l">Полив</span>${p.times.join(", ")} · ${p.ml} мл${p.every > 1 ? " раз в " + p.every + " дн" : ""}</div><div><span class="l">CO₂ до</span>${p.co2} ppm</div>
+      <div><span class="l">Прорастание</span>${p.germ.days} дн при ${p.germ.t[0]}–${p.germ.t[1]} °C${p.germ.dark ? ", в темноте" : ""}</div><div><span class="l">Модули</span>${presetModulesText(plantToPreset(p))}</div>
+    </div>
+    ${p.note ? `<p class="small" style="margin:10px 0 0">${esc(p.note)}</p>` : ""}
+  </div>`;
+}
+let refSelected = null;
+function renderRef(){
+  const q = $("refSearch").value;
+  const list = libraryMatches(q).slice(0, 8);
+  $("refResults").innerHTML = list.map(p => `<button type="button" class="ref-item ${refSelected === p.id ? "on" : ""}" data-p="${p.id}">${p.icon} ${esc(p.name)}</button>`).join("") ||
+    `<span class="small muted">Ничего не нашлось. Попробуйте другое название.</span>`;
+  $("refResults").querySelectorAll("[data-p]").forEach(b => b.onclick = () => { refSelected = b.dataset.p; renderRef(); });
+  const p = PLANTS.find(x => x.id === refSelected);
+  if(!p){ $("refInfo").innerHTML = ""; return; }
+  const n = $("pStages").querySelectorAll(".stage-edit").length;
+  $("refInfo").innerHTML = plantInfoHtml(p) + `<div class="row" style="margin-top:12px">
+      <select id="refStage" style="width:auto">${Array.from({length:n}, (_, i) => `<option value="${i}">в этап ${i + 1}</option>`).join("")}</select>
+      <button type="button" class="btn light sm" id="refApplyStage">Подставить климат, свет и полив</button>
+      <button type="button" class="btn sm" id="refApplyAll">Заполнить весь пресет</button></div>`;
+  $("refApplyStage").onclick = () => {
+    const sts = readStagesFromForm(), i = +$("refStage").value, gen = plantToStages(p), src = gen[gen.length - 1];
+    sts[i] = {...sts[i], climate:src.climate, watering:src.watering, uv:src.uv};
+    renderStageEditors(sts); toast("Значения подставлены в этап " + (i + 1));
+  };
+  $("refApplyAll").onclick = () => {
+    const pr = plantToPreset(p);
+    if(!$("pName").value.trim()) $("pName").value = p.name;
+    if(!$("pDesc").value.trim()) $("pDesc").value = p.note;
+    if(draft.icon === "🌱" && !draft.iconImg){ draft.icon = p.icon; setDraftIcon(); }
+    renderStageEditors(JSON.parse(JSON.stringify(pr.stages)));
+    const m = pr.modules;
+    $("pModHum").checked = m.humidifier.use; $("pModHeat").checked = m.heater.use; $("pModFan").checked = m.fan.use;
+    $("pFanEvery").value = m.fan.everyMin; $("pFanFor").value = m.fan.forMin; $("pFanSpeed").value = m.fan.speed;
+    $("pFanFields").hidden = !m.fan.use;
+    toast("Пресет заполнен по справочнику");
+  };
+}
+
+/* ===================== ГРАФИКИ: ГЛАВНЫЙ И РАЗВЁРНУТЫЙ ===================== */
+function applyChartLayout(){
+  const main = lsGet("gb.mainChart", "");
+  const grid = $("chartGrid");
+  grid.querySelectorAll(".chart-card").forEach(c => {
+    const on = c.dataset.chart === main;
+    c.classList.toggle("main", on);
+    c.querySelector("[data-pin]").classList.toggle("on", on);
+    c.querySelector("[data-pin]").title = on ? "Убрать из главных" : "Сделать главным";
+  });
+  const mainCard = grid.querySelector(`.chart-card[data-chart="${main}"]`);
+  if(mainCard) grid.prepend(mainCard);
+  else ["chClimate","chVpd","chAir","chWeight"].forEach(id => grid.appendChild(grid.querySelector(`.chart-card[data-chart="${id}"]`)));
+  Object.values(charts).forEach(c => c.resize());
+}
+function initChartCards(){
+  document.querySelectorAll(".chart-card").forEach(card => {
+    card.querySelector("[data-pin]").onclick = () => {
+      const id = card.dataset.chart, cur = lsGet("gb.mainChart", "");
+      lsSet("gb.mainChart", cur === id ? "" : id); applyChartLayout();
+    };
+    card.querySelector("[data-expand]").onclick = () => openBigChart(card.dataset.chart, card.querySelector("h3").textContent);
+  });
+  applyChartLayout();
+}
+function openBigChart(id, title){
+  $("bigTitle").textContent = title;
+  $("chartDlg").showModal();
+  const [from, to] = S.chartRange || [nowMs() - 86400000, nowMs()];
+  const spec = CHART_SPECS[id](S.chartData);
+  lineChart("chBig", from, to, spec.datasets, spec.axes);
+  const src = charts[id];
+  if(src){ charts.chBig.options.scales.x.min = src.scales.x.min; charts.chBig.options.scales.x.max = src.scales.x.max; charts.chBig.update("none"); }
+}
+
 /* ===================== ДЕМО-СИМУЛЯЦИЯ ===================== */
 function startDemo(){
   const P = "devices/" + DEVICE_ID;
@@ -2336,6 +3222,7 @@ function startDemo(){
       }
       if(c.calibrate) setTimeout(() => ev("info", "calibration", `Калибровка: насос работал ${c.calibrate.seconds} с. Измерьте объём и введите его на странице`), 3000);
       if(c.tare){ r("telemetry").update({weight:0}); ev("info", "tare", "Весы обнулены"); }
+      if(c.scaleCal){ r("telemetry").update({scaleFactor:-321.4, weight:c.scaleCal.grams}); ev("info", "calibration", `Весы откалиброваны: коэффициент -321.40 по грузу ${c.scaleCal.grams} г`); }
       if(c.testTelegram) ev("info", "settings", "Демо-режим: сообщение в Telegram не отправляется");
       if(c.reboot){ r("telemetry").update({uptime:0}); ev("info", "boot", "Перезагрузка по команде"); }
     }
