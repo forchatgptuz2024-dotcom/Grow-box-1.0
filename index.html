@@ -20,7 +20,7 @@
   --radius:18px; --shadow:0 2px 10px rgba(46,125,50,.07),0 1px 2px rgba(0,0,0,.04);
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Nunito',system-ui,sans-serif;font-size:15px}
+html,body{margin:0;background:var(--bg);color-scheme:light;color:var(--text);font-family:'Nunito',system-ui,sans-serif;font-size:15px}
 button,input,select,textarea{font-family:inherit;font-size:14px}
 [hidden]{display:none!important}
 h2{font-size:20px;margin:6px 0 14px}
@@ -36,7 +36,7 @@ h3{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
 .logo span{font-size:30px}
 
 /* ---------- каркас ---------- */
-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .head-in{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .head-in .logo{font-size:20px}
 .head-in .logo span{font-size:24px}
@@ -163,6 +163,7 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#1f3a26;color:#fff;padding:11px 18px;border-radius:14px;
   font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:calc(100% - 32px)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.demo-banner{display:flex;gap:10px;align-items:center;padding:11px 14px;border-radius:14px;background:var(--uv-l);color:var(--uv);font-weight:700;margin-bottom:14px}
 .empty{text-align:center;padding:26px 10px;color:var(--muted)}
 @media (max-width:600px){
   .metric .val{font-size:24px}
@@ -203,6 +204,7 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
   </header>
 
   <main>
+    <div id="demoBanner" class="demo-banner" hidden>🧪 Демо-режим: показаны примерные данные. Впишите свой firebaseConfig в начало скрипта, и страница подключится к настоящему боксу.</div>
     <!-- ======== ОБЗОР ======== -->
     <section id="tab-overview" class="tab active">
       <div id="alarms"></div>
@@ -439,6 +441,16 @@ dialog::backdrop{background:rgba(20,40,25,.35)}
   </form>
 </dialog>
 
+<dialog id="askDlg">
+  <div class="dlg">
+    <p id="askMsg" style="font-weight:700;font-size:16px;margin:0;line-height:1.4"></p>
+    <div class="dlg-foot">
+      <button type="button" class="btn ghost" id="askNo">Отмена</button>
+      <button type="button" class="btn" id="askYes">Да</button>
+    </div>
+  </div>
+</dialog>
+
 <div id="toast"></div>
 
 <script>
@@ -501,10 +513,222 @@ const ZONES = [
   {name:"Арктический", t:[-30,5], h:[20,50]}
 ];
 
+/* ===================== ДЕМО-РЕЖИМ =====================
+   Пока firebaseConfig не заполнен, страница работает на примерных данных:
+   живые показатели, неделя истории, модули, журнал. Кнопки тоже работают. */
+const DEMO = typeof firebase === "undefined" || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR");
+
+function createMockDb(root){
+  const subs = [];
+  let pushSeq = 0;
+  const clone = v => v === undefined ? undefined : JSON.parse(JSON.stringify(v));
+  const parts = p => String(p || "").split("/").filter(Boolean);
+  const getAt = p => parts(p).reduce((o, k) => (o == null ? undefined : o[k]), root);
+  const resolveSv = v => {
+    if(v && typeof v === "object"){
+      if(v[".sv"] === "timestamp") return Date.now();
+      for(const k in v) v[k] = resolveSv(v[k]);
+    }
+    return v;
+  };
+  const setAt = (p, v) => {
+    const ks = parts(p); let o = root;
+    for(let i = 0; i < ks.length - 1; i++){
+      if(o[ks[i]] == null || typeof o[ks[i]] !== "object") o[ks[i]] = {};
+      o = o[ks[i]];
+    }
+    const last = ks[ks.length - 1];
+    if(v === null || v === undefined) delete o[last]; else o[last] = resolveSv(clone(v));
+  };
+  class Snap {
+    constructor(key, v){ this.key = key; this._v = v === undefined ? null : v; }
+    val(){ return this._v === null ? null : clone(this._v); }
+    exists(){ return this._v !== null; }
+    forEach(fn){
+      if(this._v && typeof this._v === "object")
+        for(const k of Object.keys(this._v).sort()) if(fn(new Snap(k, this._v[k])) === true) break;
+    }
+  }
+  class Ref {
+    constructor(path, limit){ this.path = parts(path).join("/"); this.limit = limit; }
+    get key(){ return parts(this.path).pop() || null; }
+    child(p){ return new Ref(this.path + "/" + p); }
+    orderByKey(){ return new Ref(this.path, this.limit); }
+    limitToLast(n){ return new Ref(this.path, n); }
+    _val(){
+      let v = getAt(this.path);
+      if(this.limit && v && typeof v === "object"){
+        const o = {};
+        Object.keys(v).sort().slice(-this.limit).forEach(k => o[k] = v[k]);
+        v = o;
+      }
+      return v;
+    }
+    _fire(cb){ cb(new Snap(this.key, this._val())); }
+    on(ev, cb){ subs.push({ref:this, cb}); setTimeout(() => this._fire(cb), 0); return cb; }
+    off(ev, cb){ const i = subs.findIndex(s => s.cb === cb); if(i >= 0) subs.splice(i, 1); }
+    once(){ return Promise.resolve(new Snap(this.key, this._val())); }
+    set(v){ setAt(this.path, v); notify(this.path); return Promise.resolve(); }
+    update(obj){ Object.entries(obj).forEach(([k, v]) => setAt(this.path + "/" + k, v)); notify(this.path); return Promise.resolve(); }
+    remove(){ return this.set(null); }
+    push(v){
+      const k = "-D" + String(Date.now()).padStart(14, "0") + String(pushSeq++ % 1000).padStart(3, "0");
+      const r = this.child(k);
+      if(v !== undefined) r.set(v);
+      return r;
+    }
+  }
+  function notify(path){
+    subs.slice().forEach(s => {
+      const p = s.ref.path;
+      if(path === p || path.startsWith(p + "/") || p.startsWith(path + "/")) s.ref._fire(s.cb);
+    });
+  }
+  return { ref: p => new Ref(p || ""), get: getAt };
+}
+
+const hmToMin = s => { const m = String(s || "").match(/^(\d{1,2}):(\d{2})/); return m ? (+m[1]) * 60 + (+m[2]) : 0; };
+const inWin = (m, s, e) => s === e ? false : s < e ? (m >= s && m < e) : (m >= s || m < e);
+function demoNextWater(w){
+  if(!w || w.enabled === false || !(w.times || []).length) return -1;
+  const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+  const mins = w.times.map(hmToMin).sort((a, b) => a - b);
+  const next = mins.find(x => x > m);
+  return next !== undefined ? next - m : mins[0] + 1440 - m;
+}
+
+function buildDemoData(){
+  const now = Date.now(), H = 3600000;
+  const key = (ts, n = 0) => "-D" + String(ts).padStart(14, "0") + String(n).padStart(3, "0");
+  const localMin = ts => { const d = new Date(ts); return d.getHours() * 60 + d.getMinutes(); };
+  let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 - 0.5; };
+
+  const history = {}, events = {};
+  let w = 640;
+  const start = now - 7 * 24 * H;
+  for(let ts = start - (start % 300000); ts <= now; ts += 300000){
+    const m = localMin(ts), phase = (m - 14 * 60) / 1440 * 2 * Math.PI;
+    const light = m >= 360 && m < 1320;
+    const t = 21 + 2.6 * Math.cos(phase) + rnd() * 0.4;
+    const h = 60 - 7 * Math.cos(phase) + rnd() * 1.5;
+    const co2 = light ? 560 + 60 * Math.cos(phase) + rnd() * 30 : 780 + rnd() * 40;
+    const tvoc = 60 + 25 * Math.cos(phase) + rnd() * 10;
+    w -= (light ? 0.4 : 0.2) + rnd() * 0.05;
+    if(m === 480 || m === 1200){
+      const before = w; w += 50;
+      events[key(ts)] = {ts, level:"info", type:"watering", source:"box",
+        msg:`Полив 50 мл (расписание), вес до полива ${Math.round(before)} г`, ml:50, weight:+before.toFixed(1)};
+    }
+    history[key(ts)] = {ts, t:+t.toFixed(1), h:+h.toFixed(1), co2:Math.round(co2), tvoc:Math.round(tvoc), w:+w.toFixed(1), uv:light ? 80 : 0};
+  }
+  const addEv = (ago, level, type, msg, source = "box") => { const ts = now - ago; events[key(ts, 1)] = {ts, level, type, source, msg}; };
+  addEv(7 * 24 * H - 60000, "info", "boot", "Grow Box запущен");
+  addEv(6 * 24 * H, "info", "module", "Модуль «Увлажнитель» запущен", "hum-A1B2C3");
+  addEv(5 * 24 * H, "info", "settings", "Настройки обновлены");
+  addEv(2 * 24 * H + 25 * 60000, "alarm", "door", "Дверь открыта дольше 5 мин — закройте дверь");
+  addEv(2 * 24 * H + 21 * 60000, "info", "door", "Дверь закрыта");
+  addEv(26 * H, "alarm", "water", "Нет воды: подключите резервуар или подачу воды");
+  addEv(25.6 * H, "info", "water", "Вода снова есть");
+  addEv(3 * H, "alarm", "module", "Модуль «Нагреватель» не отвечает");
+
+  const settings = {
+    version:now, presetId:"microgreens", presetName:"Микрозелень", presetIcon:"🌱", presetLatin:"Mikrozelen",
+    climate:{tempMin:18, tempMax:24, humMin:50, humMax:70, co2Max:1000},
+    watering:{enabled:true, times:["08:00", "20:00"], everyDays:1, volumeMl:50, flowMlPerSec:12.5},
+    uv:{mode:"auto", start:"06:00", end:"22:00", brightness:80},
+    door:{warnMinutes:5}, timezoneMin:180,
+    notify:{telegram:{enabled:false, token:"", chatId:"", notifyWatering:false}}
+  };
+  const last = history[Object.keys(history).sort().pop()];
+  const telemetry = {
+    ts:now, t:last.t, h:last.h, co2:last.co2, tvoc:last.tvoc, co2Warm:false, weight:last.w,
+    sensors:{bme:true, ccs:true, hx:true}, water:true, waterLevel:2870, pump1:"off", waterAlarm:false,
+    pump2:false, pump2Ml:0, door:"closed", doorWarn:false, led:0, uv:last.uv, uvWanted:last.uv > 0,
+    timeValid:true, nextWaterMin:demoNextWater(settings.watering), uptime:6 * 86400 + 5 * 3600,
+    rssi:-58, ip:"192.168.1.47", fw:"3.0", modulesOnline:2
+  };
+  const modules = {
+    "hum-A1B2C3":{info:{type:"humidifier", fw:"1.0", ip:"192.168.1.52"},
+      settings:{name:"Увлажнитель", mode:"auto", custom:{enabled:false, low:55, high:65}, safety:{maxRunMin:30, restMin:5}},
+      state:{on:false, reason:"влажность в норме", lastSeen:now, rssi:-61, resting:false, overheat:false, dataFresh:true}},
+    "fan-4F2E91":{info:{type:"fan", fw:"1.0", ip:"192.168.1.53"},
+      settings:{name:"Вентиляция", mode:"auto", custom:{enabled:false, tempMax:28, humMax:75, co2Max:1200}, fan:{speed:70, everyMin:60, forMin:5}},
+      state:{on:true, reason:"проветривание по расписанию", speed:70, lastSeen:now, rssi:-66, resting:false, overheat:false, dataFresh:true}},
+    "heat-7C1D05":{info:{type:"heater", fw:"1.0", ip:"192.168.1.54"},
+      settings:{name:"Нагреватель", mode:"auto", custom:{enabled:false, low:20, high:23}, safety:{maxRunMin:60, restMin:5, maxTemp:35}},
+      state:{on:false, reason:"температура в норме", lastSeen:now - 3 * H, rssi:-72, resting:false, overheat:false, dataFresh:true}}
+  };
+  const presets = {
+    "-Dcustom-basil":{name:"Базилик Генуэзский", icon:"🌿", desc:"Мой сорт, после пикировки",
+      climate:{tempMin:21, tempMax:27, humMin:45, humMax:60, co2Max:1200},
+      watering:{times:["09:00"], everyDays:1, volumeMl:120}, uv:{start:"07:00", end:"21:00", brightness:100}, updated:now}
+  };
+  return {devices:{[DEVICE_ID]:{settings, telemetry, history, events, modules, presets}}};
+}
+
+function startDemo(){
+  const P = "devices/" + DEVICE_ID;
+  const g = p => db.get(P + "/" + p);
+  const r = p => db.ref(P + "/" + p);
+  const ev = (level, type, msg, extra) => r("events").push({ts:Date.now(), level, type, source:"box", msg, ...(extra || {})});
+
+  // живые показатели каждые 5 с
+  setInterval(() => {
+    const t = g("telemetry"); if(!t) return;
+    const s = g("settings") || {}, u = s.uv || {};
+    const jit = (v, a, lo, hi) => Math.min(hi, Math.max(lo, +(v + (Math.random() - .5) * a).toFixed(1)));
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    const uvOn = u.mode === "on" || (u.mode !== "off" && inWin(m, hmToMin(u.start), hmToMin(u.end)));
+    const upd = {ts:Date.now(), t:jit(t.t, .2, 15, 32), h:jit(t.h, .6, 30, 90),
+      co2:Math.round(jit(t.co2, 12, 400, 1500)), tvoc:Math.round(jit(t.tvoc, 4, 10, 400)),
+      uptime:(t.uptime || 0) + 5, uvWanted:uvOn, uv:uvOn && t.door === "closed" ? (u.brightness ?? 100) : 0,
+      nextWaterMin:demoNextWater(s.watering)};
+    if(!t.pump2) upd.weight = +(t.weight - 0.007).toFixed(3);
+    r("telemetry").update(upd);
+    const mods = g("modules") || {};
+    Object.keys(mods).forEach(id => { if(id !== "heat-7C1D05") r("modules/" + id + "/state").update({lastSeen:Date.now()}); });
+  }, 5000);
+
+  // команды со страницы
+  setInterval(() => {
+    const c = g("commands");
+    if(c){
+      Object.keys(c).forEach(k => r("commands/" + k).remove());
+      if(c.waterNow){
+        const ml = c.waterNow.ml, before = g("telemetry").weight;
+        r("telemetry").update({pump2:true, pump2Ml:ml});
+        setTimeout(() => {
+          r("telemetry").update({pump2:false, pump2Ml:0, weight:+(before + ml).toFixed(1)});
+          ev("info", "watering", `Полив ${ml} мл (вручную), вес до полива ${Math.round(before)} г`, {ml, weight:before});
+        }, 4000);
+      }
+      if(c.calibrate) setTimeout(() => ev("info", "calibration", `Калибровка: насос работал ${c.calibrate.seconds} с. Измерьте объём и введите его на странице`), 3000);
+      if(c.tare){ r("telemetry").update({weight:0}); ev("info", "tare", "Весы обнулены"); }
+      if(c.testTelegram) ev("info", "settings", "Демо-режим: сообщение в Telegram не отправляется");
+      if(c.reboot){ r("telemetry").update({uptime:0}); ev("info", "boot", "Перезагрузка по команде"); }
+    }
+    const mods = g("modules") || {};
+    Object.entries(mods).forEach(([id, m]) => {
+      if(m.command && m.command.test){
+        r("modules/" + id + "/command").remove();
+        const prev = m.state || {};
+        r("modules/" + id + "/state").update({on:true, reason:"тест"});
+        setTimeout(() => r("modules/" + id + "/state").update({on:!!prev.on, reason:prev.reason || ""}), m.command.test * 1000);
+      }
+    });
+  }, 1000);
+}
+
 /* ===================== FIREBASE ===================== */
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+let auth = null, db;
+if(DEMO){
+  db = createMockDb(buildDemoData());
+} else {
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.database();
+}
 const base = db.ref("devices/" + DEVICE_ID);
 
 const S = { telemetry:null, settings:null, modules:{}, presets:{}, events:[], history24:[], serverOffset:0, chartHours:24, chartData:[], logFilter:"all" };
@@ -529,6 +753,18 @@ function ago(ts){
 function toast(msg){
   const t = $("toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function ask(msg, yes){
+  return new Promise(res => {
+    const d = $("askDlg");
+    $("askMsg").textContent = msg;
+    $("askYes").textContent = yes || "Да";
+    const done = v => { $("askYes").onclick = $("askNo").onclick = d.oncancel = null; if(d.open) d.close(); res(v); };
+    $("askYes").onclick = () => done(true);
+    $("askNo").onclick = () => done(false);
+    d.oncancel = e => { e.preventDefault(); done(false); };
+    d.showModal();
+  });
 }
 function vpd(t, h){
   if(t === undefined || h === undefined || t === null || h === null) return null;
@@ -574,7 +810,12 @@ function sendCommand(name, value){
 /* ===================== ВХОД ===================== */
 // Вход без формы: анонимное подключение к Firebase
 let appStarted = false;
-auth.onAuthStateChanged(user => {
+if(DEMO){
+  setTimeout(() => {
+    $("login").hidden = true; $("app").hidden = false; $("demoBanner").hidden = false;
+    appStarted = true; startApp(); startDemo();
+  }, 0);
+} else auth.onAuthStateChanged(user => {
   if(user){
     $("login").hidden = true;
     $("app").hidden = false;
@@ -753,7 +994,7 @@ function dewPoint(t, h){
 $("btnWaterNow").onclick = async () => {
   const ml = Math.round(+$("qWaterMl").value);
   if(!(ml > 0 && ml <= 2000)) return toast("Укажите объём от 1 до 2000 мл");
-  if(!confirm(`Полить сейчас ${ml} мл?`)) return;
+  if(!await ask(`Полить сейчас ${ml} мл?`)) return;
   await sendCommand("waterNow", {ml, ts: Date.now()});
   toast("Команда отправлена — полив начнётся в течение нескольких секунд");
 };
@@ -803,9 +1044,12 @@ function renderWeight(){
 
 /* ===================== ГРАФИКИ ===================== */
 const charts = {};
-Chart.defaults.font.family = "Nunito, system-ui, sans-serif";
-Chart.defaults.color = "#6c8272";
+if(typeof Chart !== "undefined"){
+  Chart.defaults.font.family = "Nunito, system-ui, sans-serif";
+  Chart.defaults.color = "#6c8272";
+}
 function lineChart(id, labels, datasets, yOpts){
+  if(typeof Chart === "undefined") return;
   if(charts[id]) charts[id].destroy();
   charts[id] = new Chart($(id), {
     type: "line",
@@ -950,11 +1194,11 @@ $("btnTgTest").onclick = async () => {
   await sendCommand("testTelegram", true); toast("Бокс отправит тестовое сообщение");
 };
 $("btnTare").onclick = async () => {
-  if(!confirm("Обнулить весы? Уберите с платформы всё, что не должно учитываться.")) return;
+  if(!await ask("Обнулить весы? Уберите с платформы всё, что не должно учитываться.")) return;
   await sendCommand("tare", true); toast("Весы будут обнулены");
 };
 $("btnReboot").onclick = async () => {
-  if(!confirm("Перезагрузить бокс?")) return;
+  if(!await ask("Перезагрузить бокс?")) return;
   await sendCommand("reboot", true); toast("Бокс перезагружается");
 };
 function renderDevInfo(){
@@ -991,13 +1235,13 @@ function renderPresets(){
   document.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => openPresetDlg(find(b.dataset.edit), b.dataset.edit));
   document.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const p = find(b.dataset.copy); openPresetDlg({...p, name:p.name + " (мой)"}, null); });
   document.querySelectorAll("#presetGrid [data-del]").forEach(b => b.onclick = async () => {
-    if(!confirm("Удалить этот пресет?")) return;
+    if(!await ask("Удалить этот пресет?")) return;
     await base.child("presets/" + b.dataset.del).remove(); toast("Пресет удалён");
   });
 }
 async function applyPreset(p){
   if(!p) return;
-  if(!confirm(`Применить пресет «${p.name}»? Цели климата, полив и UV будут заменены.`)) return;
+  if(!await ask(`Применить пресет «${p.name}»? Цели климата, полив и UV будут заменены.`)) return;
   await saveSettings({
     presetId:p.id, presetName:p.name, presetIcon:p.icon || "🌱", presetLatin:translit(p.name) || "Preset",
     climate:{...p.climate},
@@ -1157,7 +1401,7 @@ function renderModules(){
       });
       el.querySelector("[data-test]").onclick = async () => { await base.child("modules/" + id + "/command").set({test:10}); toast("Модуль включится на 10 секунд"); };
       el.querySelector("[data-remove]").onclick = async () => {
-        if(!confirm("Удалить модуль со страницы? Если он включён, то зарегистрируется снова с настройками по умолчанию.")) return;
+        if(!await ask("Удалить модуль со страницы? Если он включён, то зарегистрируется снова с настройками по умолчанию.")) return;
         await base.child("modules/" + id).remove(); toast("Модуль удалён");
       };
     }
