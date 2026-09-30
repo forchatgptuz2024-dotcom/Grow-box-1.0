@@ -788,17 +788,20 @@ nav button.active{border-bottom-width:2px}
 /* =====================================================================
    НАСТРОЙКИ FIREBASE — вставьте конфигурацию своего веб-приложения
    (Консоль Firebase → Настройки проекта → Ваши приложения → Web).
-   Пока здесь заглушки, страница работает в демо-режиме.
+   Демо-режим: поставьте DEMO_FORCE = true, чтобы смотреть страницу на примерных данных.
    ===================================================================== */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR-PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR-PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "YOUR-PROJECT",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyA0BTwykFrBjPhzY6uOkM-2xZug7y-Q_OE",
+  authDomain: "grow-box-548c3.firebaseapp.com",
+  databaseURL: "https://grow-box-548c3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "grow-box-548c3",
+  storageBucket: "grow-box-548c3.firebasestorage.app",
+  messagingSenderId: "106904784961",
+  appId: "1:106904784961:web:b09c5b48840b29b3aff6c0"
 };
 const DEVICE_ID = "growbox";
-const DEMO = typeof firebase === "undefined" || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR");
+const DEMO_FORCE = false;
+const DEMO = DEMO_FORCE || typeof firebase === "undefined" || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR");
 
 /* ===================== СПРАВОЧНИКИ ===================== */
 const st = (name, days, c, w, u) => ({name, days,
